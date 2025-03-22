@@ -20,7 +20,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 export const LoginPage = () => {
   const { isLoading, errorMessage } = useSelector((state) => state.auth);
-  console.log(isLoading);
 
   const dispatch = useDispatch();
 
@@ -53,6 +52,12 @@ export const LoginPage = () => {
           sx={{ mb: 1, color: "text.primary", ml: 2, opacity: 0.6 }}
         >
           {"Please enter your details"}
+        </Typography>
+        <Typography
+          variant="body"
+          sx={{ mb: 1, color: "text.primary", ml: 2, opacity: 0.6 }}
+        >
+          {"user : demo@zen.com | pass : 123456"}
         </Typography>
 
         <Typography

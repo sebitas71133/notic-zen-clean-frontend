@@ -10,8 +10,6 @@ import {
 //PREPARA UNA NUEVA NOTA VACIA
 export const newNoteThunk = () => {
   return async (dispatch, getState) => {
-    console.log(getState());
-
     dispatch(setSaving(true));
     const { email } = getState().auth;
 
@@ -51,7 +49,7 @@ export const getNotesThunk = () => {
 
     try {
       const notes = await getNotesFromFirestore(email);
-      console.log(notes);
+
       dispatch(setNotes(notes));
     } catch (error) {
       console.error(error);

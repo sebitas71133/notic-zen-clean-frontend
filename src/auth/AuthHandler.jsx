@@ -17,9 +17,10 @@ export const AuthHandler = () => {
       } else {
         navigate("/app", { replace: true });
       }
-    } else if (status === "not-authenticated") {
-      navigate("/auth", { replace: true });
     }
+    // else if (status === "not-authenticated") {
+    //   navigate("/", { replace: true });
+    // }
   }, [navigate, status, userRole]);
 
   if (status === "checking") {

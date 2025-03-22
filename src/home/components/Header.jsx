@@ -40,8 +40,9 @@ export const Header = () => {
         <Link to={"auth/login"}>
           <Button
             variant="outlined"
-            color="primary"
             sx={{
+              color: "white",
+              bgcolor: "primary.main",
               "&:hover": {
                 backgroundColor: "text.secondary",
                 color: "white",
@@ -52,7 +53,7 @@ export const Header = () => {
             INGRESA
           </Button>
         </Link>
-        <Link to={"loginDemo"}>
+        {/* <Link to={"loginDemo"}>
           <Button
             variant="outlined"
             color="secondary"
@@ -67,7 +68,7 @@ export const Header = () => {
           >
             DEMO
           </Button>
-        </Link>
+        </Link> */}
       </Box>
     </Box>
   );

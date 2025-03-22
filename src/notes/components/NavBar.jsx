@@ -5,16 +5,21 @@ import { logoutFirebaseThunk } from "../../store/slices/authSlice";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { toggleDarkMode } from "../../store/slices/themeSlice";
 import { DarkMode } from "../../components/DarkMode";
+import { useNavigate } from "react-router-dom";
 
 export const NavBar = ({ drawerWidth = 240 }) => {
   const { darkMode } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const isLargeScreen = useMediaQuery("(min-width: 1024px)");
   const setDarkMode = () => {
     dispatch(toggleDarkMode());
   };
 
-  console.log(darkMode);
+  const handleLogout = () => {
+    dispatch(logoutFirebaseThunk());
+    navigate("/auth", { replace: true }); // Redirige al login
+  };
 
   return (
     <AppBar
@@ -44,10 +49,7 @@ export const NavBar = ({ drawerWidth = 240 }) => {
           </Typography>
 
           <DarkMode darkMode={darkMode} setDarkMode={setDarkMode} />
-          <IconButton
-            onClick={() => dispatch(logoutFirebaseThunk())}
-            color="error"
-          >
+          <IconButton onClick={handleLogout} color="error">
             <LogoutOutlined />
           </IconButton>
         </Grid2>

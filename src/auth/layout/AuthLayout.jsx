@@ -6,8 +6,6 @@ import { useSelector } from "react-redux";
 export const AuthLayout = () => {
   const { status } = useSelector((state) => state.auth);
 
-  console.log(status);
-
   return (
     <Grid2
       container
