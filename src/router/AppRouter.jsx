@@ -6,6 +6,7 @@ import NoteRoutes from "../notes/routes/NoteRoutes";
 import AdminRoutes from "../admin/routes/AdminRoutes";
 import { AuthHandler } from "../auth/AuthHandler";
 import NotFoundPage from "../components/NotFoundPage";
+import { ThemeProvider } from "@mui/material";
 
 const routes = [
   {

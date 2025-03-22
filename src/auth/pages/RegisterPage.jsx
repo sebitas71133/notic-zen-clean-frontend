@@ -174,7 +174,10 @@ export const RegisterPage = () => {
             justifyContent="center"
             width={"100%"}
           >
-            <Typography variant="body2" sx={{ mr: 2, opacity: 0.6 }}>
+            <Typography
+              variant="body2"
+              sx={{ mr: 2, opacity: 0.6, color: "text.primary" }}
+            >
               Do you have an account?
             </Typography>
             <Link

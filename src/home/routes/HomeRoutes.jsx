@@ -3,6 +3,7 @@ import { HomePage } from "../page/HomePage";
 
 const homeRoutes = {
   path: "/",
+
   element: <HomeLayout />,
   children: [
     {

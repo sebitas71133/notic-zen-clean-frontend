@@ -191,14 +191,17 @@ export const LoginPage = () => {
             justifyContent="center"
             width={"100%"}
           >
-            <Typography variant="body2" sx={{ mr: 2, opacity: 0.6 }}>
+            <Typography
+              variant="body2"
+              sx={{ mr: 2, opacity: 0.6, color: "text.primary" }}
+            >
               Don't have an account?{" "}
             </Typography>
             <Link
               variant="body2"
               component={RouterLink}
               to="/auth/register"
-              sx={{ color: "palette.primary" }}
+              sx={{ color: "primary.main" }}
               disabled={isLoading}
             >
               Sign up
