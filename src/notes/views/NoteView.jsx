@@ -142,13 +142,19 @@ export const NoteView = () => {
         mx: "auto",
         p: 3,
         mt: 4,
-        bgcolor: "background.paper",
+        bgcolor: "primary.main",
         borderRadius: 2,
         boxShadow: 3,
       }}
     >
       {/* 🗓️ Fecha */}
-      <Typography variant="h5" fontWeight="light" textAlign="center" mb={2}>
+      <Typography
+        variant="h5"
+        fontWeight="light"
+        textAlign="center"
+        mb={2}
+        color="text.primary"
+      >
         {activeNote ? formatDate(activeNote?.date) : "No date available"}
       </Typography>
 
@@ -164,12 +170,11 @@ export const NoteView = () => {
         <Box>
           <IconButton
             disabled={isSaving || isUploadingImages}
-            color="primary"
             sx={{
               mx: 1,
               p: 1.5,
-              bgcolor: "primary.main",
-              color: "white",
+              bgcolor: "text.primary",
+              color: "primary.main",
               "&:hover": { bgcolor: "primary.dark" },
             }}
             type="submit"
@@ -202,7 +207,7 @@ export const NoteView = () => {
         {...register("title", { required: "El título es requerido" })}
         error={!!errors.title}
         helperText={errors.title?.message}
-        sx={{ mb: 2 }}
+        sx={{ mb: 2, color: "primary.main" }}
       />
 
       <TextField

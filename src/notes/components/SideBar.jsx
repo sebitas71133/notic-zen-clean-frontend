@@ -25,19 +25,18 @@ export const SideBar = ({ drawerWidth = 240, displayName, list = [] }) => {
 
   const drawerContent = (
     <>
-      <Toolbar>
+      <Toolbar sx={{ borderRight: 1, borderColor: "text.primary" }}>
         <Typography
           variant="h5"
           noWrap
           ml={6}
           sx={{ display: "flex", alignItems: "center", gap: 1 }}
-          color="primary.main"
         >
-          <AccountCircleIcon sx={{ color: "primary.main" }} />
+          <AccountCircleIcon sx={{ color: "text.primary" }} />
           {displayName}
         </Typography>
       </Toolbar>
-      <Divider />
+      <Divider sx={{ bgcolor: "text.primary" }} />
       <List>
         {list.map((note) => (
           <SideBarItem key={note.id} {...note} />
@@ -57,7 +56,7 @@ export const SideBar = ({ drawerWidth = 240, displayName, list = [] }) => {
             top: 10,
             left: 10,
             zIndex: 1300,
-            color: mobileOpen ? "primary.main" : "white",
+            color: mobileOpen ? "primary.main" : "text.primary",
           }}
         >
           <MenuIcon />
@@ -80,6 +79,8 @@ export const SideBar = ({ drawerWidth = 240, displayName, list = [] }) => {
               "& .MuiDrawer-paper": {
                 width: drawerWidth,
                 boxSizing: "border-box",
+
+                bgcolor: "primary.main",
               },
             }}
           >
@@ -96,6 +97,7 @@ export const SideBar = ({ drawerWidth = 240, displayName, list = [] }) => {
               "& .MuiDrawer-paper": {
                 width: drawerWidth,
                 boxSizing: "border-box",
+                bgcolor: "primary.main",
               },
             }}
           >

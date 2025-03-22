@@ -58,8 +58,8 @@ export const UploadImage = ({ onUpload }) => {
             type="button"
             onClick={openWidget}
             sx={{
-              padding: 2,
-              borderRadius: "12px",
+              // padding: 2,
+              // borderRadius: "12px",
               backgroundColor:
                 pendingImages > 0 ? "rgba(255, 165, 0, 0.2)" : "transparent",
               transition: "background-color 0.3s ease, transform 0.2s",
@@ -71,6 +71,8 @@ export const UploadImage = ({ onUpload }) => {
                 opacity: 0.5,
                 cursor: "not-allowed",
               },
+              bgcolor: "text.primary",
+              color: "primary.main",
             }}
             disabled={isSaving}
           >
@@ -84,7 +86,10 @@ export const UploadImage = ({ onUpload }) => {
         </Badge>
       </Tooltip>
 
-      <Typography variant="h6" sx={{ ml: 1, fontWeight: 500, color: "gray" }}>
+      <Typography
+        variant="h6"
+        sx={{ ml: 1, fontWeight: 500, color: "text.primary" }}
+      >
         Upload Image
       </Typography>
     </Box>

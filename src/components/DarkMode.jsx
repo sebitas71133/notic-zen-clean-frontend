@@ -7,9 +7,9 @@ export const DarkMode = ({ darkMode, setDarkMode }) => {
     <Switch
       checked={darkMode}
       onChange={() => setDarkMode()}
-      color="secondary"
-      icon={<Brightness7 sx={{ color: "secondary.main" }} />}
-      checkedIcon={<Brightness4 sx={{ color: "secondary.main" }} />}
+      color="primary"
+      icon={<Brightness7 sx={{ color: "white" }} />}
+      checkedIcon={<Brightness4 sx={{ color: "#262254" }} />}
       sx={{
         mr: 1,
       }}

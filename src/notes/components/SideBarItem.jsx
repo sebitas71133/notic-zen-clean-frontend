@@ -35,16 +35,22 @@ export const SideBarItem = ({
             dispatch(setActiveNote({ title, body, id, date, imagesUrls }))
           }
         >
-          <ListItemIcon>
+          <ListItemIcon sx={{ color: "text.primary" }}>
             <PestControlOutlinedIcon />
           </ListItemIcon>
           <Grid2 container>
             <ListItemText
               primary={newTitle}
-              sx={{ width: "100%" }}
-              color="text.primary"
+              sx={{
+                "& .MuiTypography-root": {
+                  color: "text.primary",
+                },
+              }}
             />
-            <ListItemText secondary={newBody} />
+            <ListItemText
+              secondary={newBody}
+              sx={{ "& .MuiTypography-root": { color: "secondary.main" } }}
+            />
           </Grid2>
         </ListItemButton>
       </ListItem>
