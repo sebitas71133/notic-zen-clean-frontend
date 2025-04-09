@@ -5,7 +5,7 @@ export const getCloudinaryImagesThunk = () => {
   return async (dispatch) => {
     try {
       const { data: cloudinaryUrls } = await axios.get(
-        "http://localhost:8888/.netlify/functions/getCloudinaryImages"
+        "https://notic-zen.netlify.app/.netlify/functions/getCloudinaryImages"
       );
 
       dispatch(setImagesFromCloud(cloudinaryUrls));
@@ -21,7 +21,7 @@ export const getCloudinaryImages = async () => {
     let cloudiImages = [];
 
     const { data } = await axios.get(
-      "http://localhost:8888/.netlify/functions/getCloudinaryImages"
+      "https://notic-zen.netlify.app/.netlify/functions/getCloudinaryImages"
     );
 
     // cloudiImages = Array.isArray(data) ? data : [];
@@ -57,7 +57,7 @@ export const deleteOrphanImagesFromCloudinary = async (orphanImages) => {
 
   try {
     const response = await axios.post(
-      "http://localhost:8888/.netlify/functions/deleteOrphanImages",
+      "https://notic-zen.netlify.app/.netlify/functions/deleteOrphanImages",
       JSON.stringify({ orphanImages }),
       { headers: { "Content-Type": "application/json" } }
     );
