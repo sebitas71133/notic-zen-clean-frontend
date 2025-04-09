@@ -1,11 +1,14 @@
 import axios from "axios";
 import { setImagesFromCloud } from "../store/slices/userSlice";
 
+const baseURL =
+  window.location.hostname === "localhost" ? "http://localhost:8888" : "";
+
 export const getCloudinaryImagesThunk = () => {
   return async (dispatch) => {
     try {
       const { data: cloudinaryUrls } = await axios.get(
-        "/.netlify/functions/getCloudinaryImages"
+        `${baseURL}/.netlify/functions/getCloudinaryImages`
       );
 
       dispatch(setImagesFromCloud(cloudinaryUrls));
@@ -20,7 +23,9 @@ export const getCloudinaryImages = async () => {
     let totalImages = 0;
     let cloudiImages = [];
 
-    const { data } = await axios.get("/.netlify/functions/getCloudinaryImages");
+    const { data } = await axios.get(
+      `${baseURL}/.netlify/functions/getCloudinaryImages`
+    );
 
     // cloudiImages = Array.isArray(data) ? data : [];
     if (Array.isArray(data)) {
@@ -55,7 +60,7 @@ export const deleteOrphanImagesFromCloudinary = async (orphanImages) => {
 
   try {
     const response = await axios.post(
-      "/.netlify/functions/deleteOrphanImages",
+      `${baseURL}/.netlify/functions/deleteOrphanImages`,
       JSON.stringify({ orphanImages }),
       { headers: { "Content-Type": "application/json" } }
     );
