@@ -6,12 +6,12 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import { Header } from "../components/Header";
 
 export const HomeLayout = () => {
-  const { status } = useSelector((state) => state.auth);
+  // const { status } = useSelector((state) => state.auth);
 
-  const navigate = useNavigate();
-  if (status === "authenticated") {
-    navigate("/app");
-  }
+  // const navigate = useNavigate();
+  // if (status === "authenticated") {
+  //   navigate("/app");
+  // }
   return (
     <Box
       sx={{

@@ -16,21 +16,7 @@ import {
   Box,
 } from "@mui/material";
 
-// Componentes personalizados
-import { UploadImage } from "../components/UploadImage";
-
 import { formatDate } from "../../utils/dates";
-
-// Redux Actions
-import {
-  deleteNoteThunk,
-  deletingImage,
-  saveNoteThunk,
-  updateNote,
-} from "../../store/slices/journalSlice";
-import { setGlobalImages } from "../../store/slices/userSlice";
-import { ImageGallery } from "../components/ImageGallery";
-import { saveImageGlobally } from "../../firebase/saveImageGlobally";
 
 export const NoteView = () => {
   const dispatch = useDispatch();

@@ -1,214 +1,359 @@
-import { Link as RouterLink } from "react-router-dom";
-import {
-  Alert,
-  Avatar,
-  Box,
-  Button,
-  Grid2,
-  Link,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { Google } from "@mui/icons-material";
-import { AuthLayout } from "../layout/AuthLayout";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  checkingAuthenticaction,
-  signInWithEmailPassowrdThunk,
-} from "../../store/slices/authSlice";
-import { useDispatch, useSelector } from "react-redux";
+// import { useAuthStore } from "../../hooks/useAuthStore";
+import Swal from "sweetalert2";
+
+import { useDispatch } from "react-redux";
+// import { loginReducer } from "../../store/slices/authSlice";
+import { useAuthStore } from "../../hooks/useAuthStore";
 
 export const LoginPage = () => {
-  const { isLoading, errorMessage } = useSelector((state) => state.auth);
+  const [isLogin, setIsLogin] = useState(true);
 
+  const { errorMessage, startLogin, startRegister, user, isLoading } =
+    useAuthStore();
   const dispatch = useDispatch();
+  //  const [login, { isLoading, error }] = useLoginMutation();
+
+  const onSubmitLogin = async (Info) => {
+    const newInfo = {
+      email: Info.emailLogin,
+      password: Info.passwordLogin,
+    };
+    await startLogin(newInfo);
+    console.log(user);
+  };
+
+  const onSubmitRegister = (data) => {
+    const newData = {
+      name: data.nameRegister,
+      email: data.emailRegister,
+      password1: data.passwordRegister1,
+      password2: data.passwordRegister2,
+    };
+    console.log(data);
+    startRegister(newData);
+  };
+
+  const handleTabChange = (isLoginSelected) => {
+    setIsLogin(isLoginSelected);
+    reset();
+  };
 
   const {
     register,
     handleSubmit,
+    setValue,
+    reset,
     watch,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
-
-  const onGoogleSignIn = () => {
-    dispatch(checkingAuthenticaction()); // Aquí sí existe dispatch
-  };
-
-  const onEmailPasswordSignIn = () => {
-    const email = watch("email");
-    const password = watch("password");
-    dispatch(signInWithEmailPassowrdThunk({ email, password }));
-  };
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Box sx={{ minHeight: "450px" }}>
-        <Typography
-          variant="body2"
-          sx={{ mb: 1, color: "text.primary", ml: 2, opacity: 0.6 }}
-        >
-          {"Please enter your details"}
-        </Typography>
-        <Typography
-          variant="body"
-          sx={{ mb: 1, color: "text.primary", ml: 2, opacity: 0.6 }}
-        >
-          {"user : demo@zen.com | pass : 123456"}
-        </Typography>
-
-        <Typography
-          variant="h4"
-          sx={{
-            mb: 4,
-            color: "text.primary",
-            ml: 2,
-            fontWeight: "800",
-            letterSpacing: 2,
-            opacity: 0.8,
-          }}
-        >
-          {"Welcome back"}
-        </Typography>
-        <Grid2 container>
-          <Grid2
-            item
-            xs={12}
-            sx={{ mt: 2, display: "flex", justifyContent: "center" }}
-            width={"100%"}
-          >
-            <TextField
-              label="Email address"
-              type="email"
-              placeholder="correo@google.com"
-              sx={{
-                width: "90%",
-                "& .MuiInputLabel-root": {
-                  color: "gray",
-                  fontSize: "0.9rem",
-                },
-              }}
-              {...register("email", {
-                required: "Email is required",
-                pattern: {
-                  value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                  message: "Invalid email address",
-                },
-              })}
-              error={!!errors.email}
-              helperText={errors.email?.message}
-            />
-          </Grid2>
-
-          <Grid2
-            item
-            xs={12}
-            sx={{ mt: 2, display: "flex", justifyContent: "center" }}
-            width={"100%"}
-          >
-            <TextField
-              label="Password"
-              type="password"
-              placeholder="........"
-              sx={{
-                width: "90%",
-                "& .MuiInputLabel-root": {
-                  color: "gray",
-                  fontSize: "0.9rem",
-                },
-              }}
-              {...register("password", { required: "Password is required" })}
-              error={!!errors.password}
-              helperText={errors.password?.message}
-            />
-          </Grid2>
-
-          <Grid2 container spacing={2} sx={{ mb: 2, mt: 4 }} width={"100%"}>
-            <Grid2
-              item
-              xs={12}
-              // md={6}
-              sx={{ display: "flex", justifyContent: "center" }}
-              mb={1}
-              width={"100%"}
+    <div className="container d-flex justify-content-center align-items-center vh-100">
+      <div
+        className="card shadow-lg p-4"
+        style={{ maxWidth: "400px", width: "100%" }}
+      >
+        {/* Tabs para alternar entre Login y Registro */}
+        <ul className="nav nav-tabs mb-3">
+          <li className="nav-item">
+            <button
+              className={`nav-link ${isLogin ? "active" : ""}`}
+              onClick={() => handleTabChange(true)}
             >
-              <Button
-                variant="contained"
-                sx={{ width: "90%", textTransform: "none" }}
-                type="submit"
-                disabled={isLoading}
-                onClick={onEmailPasswordSignIn}
-              >
-                Sign in
-              </Button>
-            </Grid2>
-            <Grid2
-              xs={12}
-              // md={6}
-              sx={{ display: "flex", justifyContent: "center" }}
-              width={"100%"}
+              Login
+            </button>
+          </li>
+          <li className="nav-item">
+            <button
+              className={`nav-link ${!isLogin ? "active" : ""}`}
+              onClick={() => handleTabChange(false)}
             >
-              <Button
-                variant="outlined"
-                sx={{ width: "90%", textTransform: "none" }}
-                disabled={isLoading}
-                type="submit"
-                onClick={onGoogleSignIn}
-              >
-                <Avatar
-                  src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
-                  alt="Google Icon"
-                  sx={{ width: 24, height: 24 }}
+              Register
+            </button>
+          </li>
+        </ul>
+
+        {/* Contenido del formulario */}
+        {isLogin && (
+          <form onSubmit={handleSubmit(onSubmitLogin)}>
+            <>
+              <div className="mb-3">
+                <label className="form-label">Email Address</label>
+                <input
+                  type="email"
+                  className={`form-control ${
+                    errors.emailLogin ? "is-invalid" : ""
+                  }`} // Agrega la clase de Bootstrap si hay error
+                  placeholder="email@example.com"
+                  name="emailLogin"
+                  {...register("emailLogin", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // regex básico de email
+                      message: "Ingresa un email válido",
+                    },
+                  })}
                 />
-                <Typography
-                  variant="h7"
-                  sx={{ ml: 1, color: "text.primary", opacity: 0.8 }}
-                >
-                  Sign in with Google
-                </Typography>
-              </Button>
-            </Grid2>
-          </Grid2>
-          <Grid2
-            item
-            xs={12}
-            sx={{ display: "flex", justifyContent: "center" }}
-            width={"100%"}
-          >
-            {errorMessage && (
-              <Alert sx={{ width: "90%" }} severity="error">
-                {errorMessage}
-              </Alert>
-            )}
-          </Grid2>
+                {errors.emailLogin && (
+                  <div className="invalid-feedback">
+                    {errors.emailLogin.message}
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Contraseña</label>
+                <input
+                  type="password"
+                  className={`form-control ${
+                    errors.passwordLogin ? "is-invalid" : ""
+                  }`} // Agrega la clase de Bootstrap si hay error
+                  placeholder="••••••••"
+                  name="passwordLogin"
+                  {...register("passwordLogin", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 4,
+                      message: "Debe tener al menos 4 caracteres",
+                    },
+                  })}
+                />
+                {errors.passwordLogin && (
+                  <div className="invalid-feedback">
+                    {errors.passwordLogin.message}
+                  </div>
+                )}
+              </div>
+              <button
+                disabled={isLoading}
+                type="submit"
+                className="btn btn-primary w-100"
+              >
+                {"Sign in"}
+              </button>
+            </>
+          </form>
+        )}
 
-          <Grid2
-            container
-            direction="row"
-            justifyContent="center"
-            width={"100%"}
-          >
-            <Typography
-              variant="body2"
-              sx={{ mr: 2, opacity: 0.6, color: "text.primary" }}
-            >
-              Don't have an account?{" "}
-            </Typography>
-            <Link
-              variant="body2"
-              component={RouterLink}
-              to="/auth/register"
-              sx={{ color: "primary.main" }}
-              disabled={isLoading}
-            >
-              Sign up
-            </Link>
-          </Grid2>
-        </Grid2>
-      </Box>
-    </form>
+        {!isLogin && (
+          <form onSubmit={handleSubmit(onSubmitRegister)}>
+            <>
+              <div className="mb-3">
+                <label className="form-label">Name</label>
+                <input
+                  type="text"
+                  className={`form-control ${
+                    errors.nameRegister ? "is-invalid" : ""
+                  }`} // Agrega la clase de Bootstrap si hay error
+                  placeholder="Your name"
+                  name="nameRegister"
+                  {...register("nameRegister", {
+                    required: "Name is required",
+                  })}
+                />
+                {errors.nameRegister && (
+                  <div className="invalid-feedback">
+                    {errors.nameRegister.message}
+                  </div> // Mensaje de error estilo Bootstrap
+                )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Correo electrónico</label>
+                <input
+                  type="email"
+                  className={`form-control ${
+                    errors.emailRegister ? "is-invalid" : ""
+                  }`} // Agrega la clase de Bootstrap si hay error
+                  placeholder="email@example.com"
+                  name="emailRegister"
+                  {...register("emailRegister", {
+                    required: "email is required",
+                  })}
+                />
+                {errors.emailRegister && (
+                  <div className="invalid-feedback">
+                    {errors.emailRegister.message}
+                  </div> // Mensaje de error estilo Bootstrap
+                )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Contraseña</label>
+                <input
+                  type="password"
+                  className={`form-control ${
+                    errors.passwordRegister1 ? "is-invalid" : ""
+                  }`} // Agrega la clase de Bootstrap si hay error
+                  placeholder="••••••••"
+                  name="passwordRegister1"
+                  {...register("passwordRegister1", {
+                    required: "password is required",
+                  })}
+                />
+                {errors.passwordRegister1 && (
+                  <div className="invalid-feedback">
+                    {errors.passwordRegister1.message}
+                  </div> // Mensaje de error estilo Bootstrap
+                )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Confirmar contraseña</label>
+                <input
+                  type="password"
+                  className={`form-control ${
+                    errors.passwordRegister2 ? "is-invalid" : ""
+                  }`} // Agrega la clase de Bootstrap si hay error
+                  placeholder="••••••••"
+                  name="passwordRegister2"
+                  {...register("passwordRegister2", {
+                    required: "enter the password again",
+                  })}
+                />
+                {errors.passwordRegister2 && (
+                  <div className="invalid-feedback">
+                    {errors.passwordRegister2.message}
+                  </div> // Mensaje de error estilo Bootstrap
+                )}
+              </div>
+
+              <button type="submit" className="btn btn-primary w-100">
+                {"Register"}
+              </button>
+            </>
+          </form>
+        )}
+
+        {/* {!isLogin ? (
+          <form key={"register-form"} onSubmit={handleSubmit(onSubmitRegister)}>
+            <>
+              <div className="mb-3">
+                <label className="form-label">Name</label>
+                <input
+                  type="text"
+                  className={`form-control ${
+                    errors.nameRegister ? "is-invalid" : ""
+                  }`} // Agrega la clase de Bootstrap si hay error
+                  placeholder="Your name"
+                  name="nameRegister"
+                  {...register("nameRegister", {
+                    required: "Name is required",
+                  })}
+                />
+                {errors.nameRegister && (
+                  <div className="invalid-feedback">
+                    {errors.nameRegister.message}
+                  </div> // Mensaje de error estilo Bootstrap
+                )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Correo electrónico</label>
+                <input
+                  type="email"
+                  className={`form-control ${
+                    errors.emailRegister ? "is-invalid" : ""
+                  }`} // Agrega la clase de Bootstrap si hay error
+                  placeholder="email@example.com"
+                  name="emailRegister"
+                  {...register("emailRegister", {
+                    required: "email is required",
+                  })}
+                />
+                {errors.emailRegister && (
+                  <div className="invalid-feedback">
+                    {errors.emailRegister.message}
+                  </div> // Mensaje de error estilo Bootstrap
+                )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Contraseña</label>
+                <input
+                  type="password"
+                  className={`form-control ${
+                    errors.passwordRegister1 ? "is-invalid" : ""
+                  }`} // Agrega la clase de Bootstrap si hay error
+                  placeholder="••••••••"
+                  name="passwordRegister1"
+                  {...register("passwordRegister1", {
+                    required: "password is required",
+                  })}
+                />
+                {errors.passwordRegister1 && (
+                  <div className="invalid-feedback">
+                    {errors.passwordRegister1.message}
+                  </div> // Mensaje de error estilo Bootstrap
+                )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Confirmar contraseña</label>
+                <input
+                  type="password"
+                  className={`form-control ${
+                    errors.passwordRegister2 ? "is-invalid" : ""
+                  }`} // Agrega la clase de Bootstrap si hay error
+                  placeholder="••••••••"
+                  name="passwordRegister2"
+                  {...register("passwordRegister2", {
+                    required: "enter the password again",
+                  })}
+                />
+                {errors.passwordRegister2 && (
+                  <div className="invalid-feedback">
+                    {errors.passwordRegister2.message}
+                  </div> // Mensaje de error estilo Bootstrap
+                )}
+              </div>
+
+              <button type="submit" className="btn btn-primary w-100">
+                {"Register"}
+              </button>
+            </>
+          </form>
+        ) : (
+          <form key={"login-form"} onSubmit={handleSubmit(onSubmitLogin)}>
+            <>
+              <div className="mb-3">
+                <label className="form-label">Email Address</label>
+                <input
+                  type="email"
+                  className={`form-control ${
+                    errors.emailLogin ? "is-invalid" : ""
+                  }`} // Agrega la clase de Bootstrap si hay error
+                  placeholder="email@example.com"
+                  name="emailLogin"
+                  {...register("emailLogin", { required: "Email is required" })}
+                />
+                {errors.emailLogin && (
+                  <div className="invalid-feedback">
+                    {errors.emailLogin.message}
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Contraseña</label>
+                <input
+                  type="password"
+                  className={`form-control ${
+                    errors.passwordLogin ? "is-invalid" : ""
+                  }`} // Agrega la clase de Bootstrap si hay error
+                  placeholder="••••••••"
+                  name="passwordLogin"
+                  {...register("passwordLogin", {
+                    required: "Password is required",
+                  })}
+                />
+                {errors.passwordLogin && (
+                  <div className="invalid-feedback">
+                    {errors.passwordLogin.message}
+                  </div>
+                )}
+              </div>
+              <button type="submit" className="btn btn-primary w-100">
+                {"Sign in"}
+              </button>
+            </>
+          </form>
+        )} */}
+      </div>
+    </div>
   );
 };

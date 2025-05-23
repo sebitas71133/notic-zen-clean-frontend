@@ -1,7 +1,7 @@
 import { AppBar, Grid2, IconButton, Toolbar, Typography } from "@mui/material";
 import { LogoutOutlined } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutFirebaseThunk } from "../../store/slices/authSlice";
+// import { logoutFirebaseThunk } from "../../store/slices/authSlice";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { toggleDarkMode } from "../../store/slices/themeSlice";
 import { DarkMode } from "../../components/DarkMode";

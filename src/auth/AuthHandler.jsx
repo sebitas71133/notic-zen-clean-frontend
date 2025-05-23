@@ -1,30 +1,36 @@
 import React, { useEffect } from "react";
 
-import { useSelector } from "react-redux";
-
 import { Outlet, useNavigate } from "react-router-dom";
-import { CheckingAuth } from "../components/CheckingAuth";
+
+import { useAuthStore } from "../hooks/useAuthStore";
+
+// Se encarga de redirigir según el estado de autenticación (authenticated, not-authenticated).
+
+// Redirige al usuario a /app o /auth, según su estado.
 
 export const AuthHandler = () => {
-  const { status } = useSelector((state) => state.auth);
-  const { userRole } = useSelector((state) => state.users);
+  const { status, checkAuthToken } = useAuthStore();
   const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    if (status === "checking") {
+      checkAuthToken(token);
+    }
+    console.log({ status });
+  }, [status]);
 
   useEffect(() => {
     if (status === "authenticated") {
-      if (userRole === "admin") {
-        navigate("/admin", { replace: true });
-      } else {
-        navigate("/app", { replace: true });
-      }
+      navigate("/app", { replace: true });
+    } else if (status === "not-authenticated") {
+      navigate("/auth", { replace: true });
     }
-    // else if (status === "not-authenticated") {
-    //   navigate("/", { replace: true });
-    // }
-  }, [navigate, status, userRole]);
+  }, [status, navigate]);
 
   if (status === "checking") {
-    return <CheckingAuth />;
+    return <div>Cargando sesión...</div>;
   }
 
   return <Outlet />;

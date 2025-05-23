@@ -1,57 +1,44 @@
-import { createContext, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  checkingCredentials,
-  getRegisteredUsers,
-  login,
-  logout,
+  checkingReducer,
+  loginReducer,
+  logoutReducer,
 } from "../store/slices/authSlice";
-import { onAuthStateChanged } from "firebase/auth";
-import { getNotesThunk } from "../store/slices/journalSlice";
-import { updateRoleUser } from "../store/slices/userSlice";
-import { fetchAllFirestoreImages } from "../firebase/fetchAllFirestoreImages";
-import { getCloudinaryImagesThunk } from "../cloudinary/cloudinaryProviders";
-import { CheckingAuth } from "../components/CheckingAuth";
-import { FirebaseAuth } from "../firebase/config";
+import { useAuthStore } from "../hooks/useAuthStore";
+
+// Se encarga de rehidratar y establecer el estado global de autenticación (Redux) al iniciar la app
+
+//Corre una vez, al montar la aplicación.
+
+//Sirve como "bootstrap" o "preparador del estado inicial".
 
 export const AuthProvider = ({ children }) => {
   const dispatch = useDispatch();
-  const { status, uid } = useSelector((state) => state.auth);
-  const { users, userRole } = useSelector((state) => state.users); // Obtiene los usuarios registrados
+  const { status } = useSelector((state) => state.auth);
+
+  const { checkAuthToken, startLogout } = useAuthStore();
 
   useEffect(() => {
-    dispatch(checkingCredentials());
+    const rehidrate = async () => {
+      dispatch(checkingReducer());
 
-    const unsubscribe = onAuthStateChanged(FirebaseAuth, (user) => {
-      if (user) {
-        const { uid, email, displayName, photoURL } = user;
-        dispatch(login({ uid, email, displayName, photoURL }));
-        dispatch(getNotesThunk());
-        // dispatch(updateRoleUser());
-        dispatch(getRegisteredUsers()); // Cargar usuarios registrados
+      const token = localStorage.getItem("token");
+      const user = localStorage.getItem("user");
+
+      if (token && user) {
+        await checkAuthToken(token);
       } else {
-        dispatch(logout());
+        // dispatch(logoutReducer());
+        startLogout();
       }
-    });
+    };
 
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (users.length > 0 && uid) {
-      dispatch(updateRoleUser(uid));
-    }
-  }, [users, uid]);
-
-  useEffect(() => {
-    if (userRole === "admin") {
-      dispatch(fetchAllFirestoreImages()); // Obtener referencias de imágenes
-      dispatch(getCloudinaryImagesThunk()); // Obtener imágenes de Cloudinary
-    }
-  }, [userRole]);
+    rehidrate();
+  }, [dispatch]);
 
   if (status === "checking") {
-    return <CheckingAuth />;
+    return <div>Rehidratando...</div>;
   }
 
   return <>{children}</>;

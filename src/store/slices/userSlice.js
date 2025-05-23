@@ -33,9 +33,7 @@ const userSlice = createSlice({
       state.isUpdatingRole = action.payload;
     },
     setGlobalImages: (state, action) => {
-      // state.globalImages = [];
       state.globalImages = [...state.globalImages, ...action.payload];
-      // console.log("global agregado : ", state.globalImages);
     },
     setImagesFromCloud: (state, action) => {
       state.imagesFromCloud = action.payload;

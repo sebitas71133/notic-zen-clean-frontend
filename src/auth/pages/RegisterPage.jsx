@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { createUserWithEmailPasswordThunk } from "../../store/slices/authSlice";
 
 export const RegisterPage = () => {
   const {
@@ -23,11 +22,11 @@ export const RegisterPage = () => {
 
   const { isLoading, errorMessage } = useSelector((state) => state.auth);
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const onSubmit = (data) => {
     console.log(data);
-    dispatch(createUserWithEmailPasswordThunk(data));
+    //  dispatch(createUserWithEmailPasswordThunk(data));
     //reset();
   };
 

@@ -9,7 +9,7 @@ export const AppTheme = ({ children }) => {
   const { darkMode } = useSelector((state) => state.theme);
 
   return (
-    <ThemeProvider theme={purpleTheme(darkMode)}>
+    <ThemeProvider theme={blueTheme(darkMode)}>
       <CssBaseline />
 
       {children}

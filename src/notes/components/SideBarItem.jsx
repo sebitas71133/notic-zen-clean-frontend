@@ -10,29 +10,29 @@ import {
 } from "@mui/material";
 import React, { useMemo } from "react";
 import { useDispatch } from "react-redux";
-import { setActiveNote } from "../../store/slices/journalSlice";
+import { setActiveNote } from "../../store/slices/noteSlice";
 
 export const SideBarItem = ({
   title = "",
-  body,
+  content,
   id,
-  date,
-  imagesUrls = [],
+  createdAt,
+  images = [],
 }) => {
   const dispatch = useDispatch();
   const newTitle = useMemo(() => {
     return title.length > 17 ? title.substring(0, 17) + "...." : title;
   }, [title]);
   const newBody = useMemo(() => {
-    return body.length > 17 ? body.substring(0, 30) + "...." : body;
-  }, [body]);
+    return content.length > 17 ? content.substring(0, 30) + "...." : content;
+  }, [content]);
 
   return (
     <>
       <ListItem key={id} disablePadding>
         <ListItemButton
           onClick={() =>
-            dispatch(setActiveNote({ title, body, id, date, imagesUrls }))
+            dispatch(setActiveNote({ title, content, id, createdAt, images }))
           }
         >
           <ListItemIcon sx={{ color: "text.primary" }}>

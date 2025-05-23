@@ -1,5 +1,8 @@
 import { NoteLayout } from "../layout/NoteLayout";
-import { NotePage } from "../pages/NotePage";
+
+import { NotePageWrapper } from "../pages/NotePageWrapper";
+
+import { NotesPage } from "../pages/NotesPage";
 
 const noteRoutes = {
   path: "/app",
@@ -7,7 +10,16 @@ const noteRoutes = {
   children: [
     {
       index: true,
-      element: <NotePage />,
+      element: <NotesPage />,
+    },
+    // {
+    //   path: "note/new",
+
+    //   element: <NotePageWrapper />,
+    // },
+    {
+      path: "note/:noteId", // <-- FALTA ESTA
+      element: <NotePageWrapper />,
     },
   ],
 };
