@@ -6,6 +6,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { toggleDarkMode } from "../../store/slices/themeSlice";
 import { DarkMode } from "../../components/DarkMode";
 import { useNavigate } from "react-router-dom";
+import { logoutReducer } from "../../store/slices/authSlice";
 
 export const NavBar = ({ drawerWidth = 240 }) => {
   const { darkMode } = useSelector((state) => state.theme);
@@ -17,7 +18,7 @@ export const NavBar = ({ drawerWidth = 240 }) => {
   };
 
   const handleLogout = () => {
-    dispatch(logoutFirebaseThunk());
+    dispatch(logoutReducer());
     navigate("/auth", { replace: true }); // Redirige al login
   };
 

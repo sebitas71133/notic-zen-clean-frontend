@@ -47,8 +47,8 @@ import { toast } from "react-toastify";
 
 export const NoteCard = ({ noteId = "new", onBack }) => {
   const { categories, tags, userId } = useOutletContext();
-  const [addNote] = useAddNoteMutation();
-  const [saveNote] = useUpdateNoteMutation();
+  const [addNote, { isLoading: isLoadingCreateNote }] = useAddNoteMutation();
+  const [saveNote, { isLoading: isLoadingSaveNote }] = useUpdateNoteMutation();
   const isNewNote = noteId === "new";
   const navigate = useNavigate();
   const { activeNote } = useSelector((state) => state.note);
@@ -76,6 +76,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
   const [newImageAlt, setNewImageAlt] = useState("");
 
   const watchedImages = watch("images");
+  console.log({ watchedImages });
 
   //IMAGENES DESDE PC :
 
@@ -134,11 +135,13 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
         `,
       });
 
+      console.log(payload);
+
       navigate("/app");
     } catch (err) {
-      console.log(err);
+      setValue("images", activeNote.images || []);
       console.error("❌ Error al guardar nota:", err);
-      Swal.fire("Oops", "No se pudo guardar la nota", "error");
+      Swal.fire("Oops", `${err.data.error}`);
     }
   };
 
@@ -146,7 +149,13 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
     if (!newImageUrl) return;
     const updated = [
       ...watchedImages,
-      { url: newImageUrl, altText: newImageAlt },
+      {
+        url: newImageUrl,
+        altText: newImageAlt,
+        publicId: undefined, // aún no existe en Cloudinary
+        id: undefined, // será llenado por el backend
+        createdAt: undefined,
+      },
     ];
     setValue("images", updated);
     setNewImageUrl("");
@@ -240,6 +249,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
             variant="contained"
             startIcon={<SaveIcon />}
             sx={{ ml: 1 }}
+            disabled={isLoadingCreateNote || isLoadingSaveNote}
           >
             Guardar
           </Button>
@@ -247,125 +257,141 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
       </Box>
 
       <Paper sx={{ p: 3 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TextField
-              label="Título"
-              fullWidth
-              {...register("title", { required: "El título es requerido" })}
-              error={!!errors.title}
-              helperText={errors.title?.message}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="Contenido"
-              fullWidth
-              multiline
-              minRows={4}
-              {...register("content", { required: "El texto es requerido" })}
-              error={!!errors.content}
-              helperText={errors.content?.message}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Controller
-              name="categoryId"
-              control={control}
-              rules={{ required: "La categoría es obligatoria" }}
-              render={({ field, fieldState }) => (
-                <FormControl fullWidth error={!!fieldState.error}>
-                  <InputLabel>Categoría</InputLabel>
-                  <Select {...field} label="Categoría">
-                    <MenuItem value="">Sin categoría</MenuItem>
-                    {categories.map((cat) => (
-                      <MenuItem key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  {fieldState.error && (
-                    <FormHelperText>{fieldState.error.message}</FormHelperText>
-                  )}
-                </FormControl>
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Controller
-              name="tags"
-              control={control}
-              rules={{
-                validate: (value) =>
-                  value.length > 0 || "Selecciona al menos una etiqueta",
-              }}
-              render={({ field, fieldState }) => (
-                <FormControl fullWidth error={!!fieldState.error}>
-                  <InputLabel>Etiquetas</InputLabel>
-                  <Select
-                    multiple
-                    {...field}
-                    renderValue={(selected) =>
-                      selected
-                        .map((id) => tags.find((t) => t.id === id)?.name)
-                        .join(", ")
-                    }
-                  >
-                    {tags
-                      .filter(
-                        (tag) => tag.userId === userId || tag.userId === null
-                      )
-                      .map((tag) => (
-                        <MenuItem key={tag.id} value={tag.id}>
-                          <Checkbox checked={field.value.includes(tag.id)} />
-                          {tag.name}
+        <Box
+          disabled={isLoadingCreateNote || isLoadingSaveNote}
+          component="fieldset"
+          sx={{ border: 0, p: 0, m: 0 }}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                label="Título"
+                fullWidth
+                {...register("title", { required: "El título es requerido" })}
+                error={!!errors.title}
+                helperText={errors.title?.message}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Contenido"
+                fullWidth
+                multiline
+                minRows={4}
+                {...register("content")}
+
+                // {...register("content", { required: "El texto es requerido" })}
+                // error={!!errors.content}
+                // helperText={errors.content?.message}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Controller
+                name="categoryId"
+                control={control}
+                rules={{ required: "La categoría es obligatoria" }}
+                render={({ field, fieldState }) => (
+                  <FormControl fullWidth error={!!fieldState.error}>
+                    <InputLabel>Categoría</InputLabel>
+                    <Select {...field} label="Categoría">
+                      <MenuItem value="">Sin categoría</MenuItem>
+                      {categories.map((cat) => (
+                        <MenuItem key={cat.id} value={cat.id}>
+                          {cat.name}
                         </MenuItem>
                       ))}
-                  </Select>
-                  {fieldState.error && (
-                    <FormHelperText>{fieldState.error.message}</FormHelperText>
-                  )}
-                </FormControl>
-              )}
-            />
+                    </Select>
+                    {fieldState.error && (
+                      <FormHelperText>
+                        {fieldState.error.message}
+                      </FormHelperText>
+                    )}
+                  </FormControl>
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Controller
+                name="tags"
+                control={control}
+                rules={{
+                  validate: (value) =>
+                    value.length > 0 || "Selecciona al menos una etiqueta",
+                }}
+                render={({ field, fieldState }) => (
+                  <FormControl fullWidth error={!!fieldState.error}>
+                    <InputLabel>Etiquetas</InputLabel>
+                    <Select
+                      multiple
+                      {...field}
+                      renderValue={(selected) =>
+                        selected
+                          .map((id) => tags.find((t) => t.id === id)?.name)
+                          .join(", ")
+                      }
+                    >
+                      {tags
+                        .filter(
+                          (tag) => tag.userId === userId || tag.userId === null
+                        )
+                        .map((tag) => (
+                          <MenuItem key={tag.id} value={tag.id}>
+                            <Checkbox checked={field.value.includes(tag.id)} />
+                            {tag.name}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                    {fieldState.error && (
+                      <FormHelperText>
+                        {fieldState.error.message}
+                      </FormHelperText>
+                    )}
+                  </FormControl>
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Box sx={{ mb: 2 }}>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={1}
+                  sx={{ mb: 2 }}
+                >
+                  <ImageOutlinedIcon color="action" />
+                  <Typography variant="h5" component="h2">
+                    Imágenes de la Nota
+                  </Typography>
+                </Stack>
+                <Gallery images={watchedImages} onRemove={handleRemoveImage} />
+                <Button
+                  startIcon={<ImageIcon />}
+                  onClick={() => setOpenImageDialog(true)}
+                  sx={{ mt: 1 }}
+                >
+                  Agregar imagen
+                </Button>
+              </Box>
+              {/* SUBIR DESDE PC */}
+              <input
+                accept="image/*"
+                type="file"
+                hidden
+                id="upload-image"
+                onChange={handleFileImageUpload}
+              />
+              <label htmlFor="upload-image">
+                <Button
+                  component="span"
+                  startIcon={<ImageIcon />}
+                  sx={{ mt: 1 }}
+                >
+                  Subir imagen desde PC
+                </Button>
+              </label>
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <Box sx={{ mb: 2 }}>
-              <Stack
-                direction="row"
-                alignItems="center"
-                spacing={1}
-                sx={{ mb: 2 }}
-              >
-                <ImageOutlinedIcon color="action" />
-                <Typography variant="h5" component="h2">
-                  Imágenes de la Nota
-                </Typography>
-              </Stack>
-              <Gallery images={watchedImages} onRemove={handleRemoveImage} />
-              <Button
-                startIcon={<ImageIcon />}
-                onClick={() => setOpenImageDialog(true)}
-                sx={{ mt: 1 }}
-              >
-                Agregar imagen
-              </Button>
-            </Box>
-            {/* SUBIR DESDE PC */}
-            <input
-              accept="image/*"
-              type="file"
-              hidden
-              id="upload-image"
-              onChange={handleFileImageUpload}
-            />
-            <label htmlFor="upload-image">
-              <Button component="span" startIcon={<ImageIcon />} sx={{ mt: 1 }}>
-                Subir imagen desde PC
-              </Button>
-            </label>
-          </Grid>
-        </Grid>
+        </Box>
       </Paper>
 
       <Dialog open={openImageDialog} onClose={() => setOpenImageDialog(false)}>

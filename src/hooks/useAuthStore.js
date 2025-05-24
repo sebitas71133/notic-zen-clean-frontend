@@ -91,7 +91,6 @@ export const useAuthStore = () => {
 
   /* ---------- logout ---------- */
   const startLogout = () => {
-    localStorage.clear();
     dispatch(logoutReducer());
   };
 

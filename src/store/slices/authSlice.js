@@ -27,8 +27,7 @@ export const authSlice = createSlice({
       state.status = "not-authenticated";
       state.user = null;
       state.token = null;
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      localStorage.clear();
       state.errorMessage = action.payload?.errorMessage || null;
     },
     setErrorReducer(state, action) {

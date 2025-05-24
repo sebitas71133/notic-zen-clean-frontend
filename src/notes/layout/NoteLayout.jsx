@@ -48,7 +48,7 @@ export const NoteLayout = () => {
   const notes = notesData.data;
   const categories = categoriesData.data;
   const tags = tagsData.data;
-
+  console.log({ notesData });
   return (
     <Box
       sx={{
