@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Typography,
@@ -6,7 +6,6 @@ import {
   Card,
   CardContent,
   CardActionArea,
-  Chip,
   Button,
   TextField,
   InputAdornment,
@@ -31,78 +30,44 @@ import {
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { setActiveNote } from "../../store/slices/noteSlice";
 import { useDispatch } from "react-redux";
+import { useGetNotesQuery } from "../../../services/noteApi";
+import { useGetTagsQuery } from "../../../services/tagApi";
 
 export const NotesPage = () => {
-  const { notes, user, categories } = useOutletContext();
+  const { categories } = useOutletContext();
 
-  const [filteredNotes, setFilteredNotes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [tagFilter, setTagFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const { data: notesData = [], isLoading: isNotesLoading } = useGetNotesQuery({
+    page: 1,
+    limit: 10,
+    ...(categoryFilter && { categoryId: categoryFilter }),
+    ...(tagFilter && { tagId: tagFilter }),
+  });
+
+  const { data: tagsData = [] } = useGetTagsQuery({ page: 1, limit: 50 });
+
   const handleNewNote = () => {
     navigate("/app/note/new");
   };
 
-  // useEffect(() => {
-  //   if (currentUser) {
-  //     const userNotes = notes.filter((note) => note.user_id === currentUser.id);
-  //     setFilteredNotes(userNotes);
-  //   }
-  // }, [currentUser, notes]);
-
-  // useEffect(() => {
-  //   applyFilters();
-  // }, [searchTerm, categoryFilter, statusFilter, notes]);
-
-  // const applyFilters = () => {
-  //   let filtered = notes.filter((note) => note.user_id === currentUser?.id);
-
-  //   if (searchTerm) {
-  //     filtered = filtered.filter(
-  //       (note) =>
-  //         (note.title &&
-  //           note.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
-  //         (note.content &&
-  //           note.content.toLowerCase().includes(searchTerm.toLowerCase()))
-  //     );
-  //   }
-
-  //   if (categoryFilter) {
-  //     filtered = filtered.filter((note) => note.category_id === categoryFilter);
-  //   }
-
-  //   if (statusFilter === "pinned") {
-  //     filtered = filtered.filter((note) => note.is_pinned);
-  //   } else if (statusFilter === "archived") {
-  //     filtered = filtered.filter((note) => note.is_archived);
-  //   } else if (statusFilter === "active") {
-  //     filtered = filtered.filter((note) => !note.is_archived);
-  //   }
-
-  //   setFilteredNotes(filtered);
-  // };
-
   const handleClearFilters = () => {
     setSearchTerm("");
     setCategoryFilter("");
+    setTagFilter("");
     setStatusFilter("all");
-    setFilteredNotes(notes);
   };
 
-  const getCategoryName = (categoryId) => {
-    const category = categories.find((cat) => cat.id === categoryId);
-    return category ? category.name : "Sin categoría";
-  };
-
-  const getCategoryColor = (categoryId) => {
-    const category = categories.find((cat) => cat.id === categoryId);
-    return category ? category.color : "#e0e0e0";
-  };
+  if (isNotesLoading || !notesData) {
+    return <div>Cargando notas...</div>;
+  }
 
   return (
     <Box>
@@ -173,13 +138,26 @@ export const NotesPage = () => {
                 onChange={(e) => setCategoryFilter(e.target.value)}
               >
                 <MenuItem value="">Todas</MenuItem>
-                {[]
-                  .filter((cat) => cat.user_id === currentUser?.id)
-                  .map((category) => (
-                    <MenuItem key={category.id} value={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  ))}
+                {categories.map((category) => (
+                  <MenuItem key={category.id} value={category.id}>
+                    {category.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+              <InputLabel>Etiqueta</InputLabel>
+              <Select
+                value={tagFilter}
+                label="Etiqueta"
+                onChange={(e) => setTagFilter(e.target.value)}
+              >
+                <MenuItem value="">Todas</MenuItem>
+                {tagsData?.data?.map((tag) => (
+                  <MenuItem key={tag.id} value={tag.id}>
+                    {tag.name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
 
@@ -210,8 +188,8 @@ export const NotesPage = () => {
       </Box>
 
       <Grid container spacing={3}>
-        {notes.length > 0 ? (
-          notes.map((note) => (
+        {notesData.data.length > 0 ? (
+          notesData.data.map((note) => (
             <Grid item xs={12} sm={6} md={4} key={note.id}>
               <Card sx={{ height: "100%" }}>
                 <CardActionArea

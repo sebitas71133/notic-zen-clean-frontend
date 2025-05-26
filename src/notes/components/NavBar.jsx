@@ -1,8 +1,15 @@
-import { AppBar, Grid2, IconButton, Toolbar, Typography } from "@mui/material";
+import {
+  AppBar,
+  Grid,
+  IconButton,
+  Toolbar,
+  Typography,
+  Tooltip,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import { LogoutOutlined } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-// import { logoutFirebaseThunk } from "../../store/slices/authSlice";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { toggleDarkMode } from "../../store/slices/themeSlice";
 import { DarkMode } from "../../components/DarkMode";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +19,10 @@ export const NavBar = ({ drawerWidth = 240 }) => {
   const { darkMode } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isLargeScreen = useMediaQuery("(min-width: 1024px)");
+
+  const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg")); // usa el tema para breakpoint
+
   const setDarkMode = () => {
     dispatch(toggleDarkMode());
   };
@@ -25,35 +35,68 @@ export const NavBar = ({ drawerWidth = 240 }) => {
   return (
     <AppBar
       position="fixed"
+      color={darkMode ? "default" : "primary"}
+      elevation={4}
       sx={{
         width: isLargeScreen ? `calc(100% - ${drawerWidth}px)` : "100%",
         ml: isLargeScreen ? `${drawerWidth}px` : 0,
+        backgroundColor: darkMode ? theme.palette.background.paper : undefined,
+        borderBottom: darkMode
+          ? `1px solid ${theme.palette.divider}`
+          : undefined,
       }}
     >
-      <Toolbar>
-        <Grid2
+      <Toolbar sx={{ px: { xs: 2, md: 3 } }}>
+        <Grid
           container
-          direction="row"
-          justifyContent="space-between"
           alignItems="center"
-          width={"100%"}
+          justifyContent="space-between"
+          wrap="nowrap"
+          spacing={2}
         >
-          <Typography
-            ml={5}
-            variant="h5"
-            margin={"auto"}
-            noWrap
-            component="div"
-            color="text.primary"
-          >
-            ZenNotes
-          </Typography>
+          <Grid item>
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{
+                fontWeight: "bold",
+                color: darkMode ? theme.palette.text.primary : "#fff",
+                userSelect: "none",
+              }}
+            >
+              ZenNotes
+            </Typography>
+          </Grid>
 
-          <DarkMode darkMode={darkMode} setDarkMode={setDarkMode} />
-          <IconButton onClick={handleLogout} color="error">
-            <LogoutOutlined />
-          </IconButton>
-        </Grid2>
+          <Grid
+            item
+            container
+            justifyContent="flex-end"
+            alignItems="center"
+            spacing={1}
+            sx={{ width: "auto" }}
+          >
+            <Grid item>
+              <Tooltip title={darkMode ? "Light Mode" : "Dark Mode"}>
+                <DarkMode darkMode={darkMode} setDarkMode={setDarkMode} />
+              </Tooltip>
+            </Grid>
+
+            <Grid item>
+              <Tooltip title="Logout">
+                <IconButton
+                  onClick={handleLogout}
+                  color="error"
+                  size="large"
+                  aria-label="logout"
+                >
+                  <LogoutOutlined fontSize="medium" />
+                </IconButton>
+              </Tooltip>
+            </Grid>
+          </Grid>
+        </Grid>
       </Toolbar>
     </AppBar>
   );

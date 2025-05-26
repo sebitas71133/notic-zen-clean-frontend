@@ -49,6 +49,7 @@ export const useAuthStore = () => {
 
       if (password1 !== password2) {
         toast.error("Las contraseñas deben ser iguales");
+        startLogout();
         return;
       }
 

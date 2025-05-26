@@ -9,34 +9,38 @@ export const categoryApi = apiSlice.injectEndpoints({
         `/category/categories?page=${page}&limit=${limit}`,
       providesTags: ["Categories"],
     }),
-    // addNote: builder.mutation({
-    //   query: (note) => ({
-    //     url: "/note/notes",
-    //     method: "POST",
-    //     body: note,
-    //   }),
-    //   invalidatesTags: ["Notes"],
-    // }),
-    // updateNote: builder.mutation({
-    //   query: ({ id, ...note }) => ({
-    //     url: `/note/notes/${id}`,
-    //     method: "PUT",
-    //     body: note,
-    //   }),
-    //   invalidatesTags: ["Notes"],
-    // }),
-    // deleteNote: builder.mutation({
-    //   query: (id) => ({
-    //     url: `/notes/${id}`,
-    //     method: "DELETE",
-    //   }),
-    //   invalidatesTags: ["Notes"],
-    // }),
+    addCategory: builder.mutation({
+      query: (category) => ({
+        url: "/category/create",
+        method: "POST",
+        body: category,
+      }),
+      invalidatesTags: ["Categories"],
+    }),
+    updateCategory: builder.mutation({
+      query: ({ id, ...category }) => ({
+        url: `/category/categories/${id}`,
+        method: "PUT",
+        body: category,
+      }),
+      invalidatesTags: ["Categories"],
+    }),
+    deleteCategory: builder.mutation({
+      query: (id) => ({
+        url: `/category/categories/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Categories"],
+    }),
   }),
 });
 
 export const {
   useLazyGetCategoriesQuery,
+  useAddCategoryMutation,
+  useDeleteCategoryMutation,
+  useUpdateCategoryMutation,
+  useGetCategoriesQuery,
   // useAddNoteMutation,
   // useDeleteNoteMutation,
   // useUpdateNoteMutation,

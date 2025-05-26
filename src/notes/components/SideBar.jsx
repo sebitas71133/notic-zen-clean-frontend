@@ -7,17 +7,25 @@ import {
   Toolbar,
   Typography,
   IconButton,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-
+import {
+  Menu as MenuIcon,
+  AccountCircle,
+  CategoryOutlined,
+  LabelOutlined,
+  NotesOutlined,
+  DashboardOutlined,
+} from "@mui/icons-material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { SideBarItem } from "./SideBarItem";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useNavigate } from "react-router-dom";
 
-export const SideBar = ({ drawerWidth = 240, displayName, list = [] }) => {
+export const SideBar = ({ drawerWidth = 240, displayName }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isLargeScreen = useMediaQuery("(min-width: 1024px)");
-  // Detecta si es PC/tablet
+  const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -25,29 +33,58 @@ export const SideBar = ({ drawerWidth = 240, displayName, list = [] }) => {
 
   const drawerContent = (
     <>
-      <Toolbar sx={{ borderRight: 1, borderColor: "text.primary" }}>
+      <Toolbar sx={{ borderRight: 1, borderColor: "divider" }}>
         <Typography
-          variant="h5"
+          variant="h6"
           noWrap
-          ml={6}
           sx={{ display: "flex", alignItems: "center", gap: 1 }}
         >
-          <AccountCircleIcon sx={{ color: "text.primary" }} />
+          <AccountCircle sx={{ color: "text.primary" }} />
           {displayName}
         </Typography>
       </Toolbar>
-      <Divider sx={{ bgcolor: "text.primary" }} />
+      <Divider sx={{ bgcolor: "divider" }} />
+
       <List>
-        {list.map((note) => (
-          <SideBarItem key={note.id} {...note} />
-        ))}
+        {/* Dashboard */}
+        <ListItemButton onClick={() => navigate("/app/dashboard")}>
+          <ListItemIcon>
+            <DashboardOutlined sx={{ color: "text.primary" }} />
+          </ListItemIcon>
+          <ListItemText primary="Dashboard" />
+        </ListItemButton>
+
+        {/* Notas */}
+        <ListItemButton onClick={() => navigate("/app")}>
+          <ListItemIcon>
+            <NotesOutlined sx={{ color: "text.primary" }} />
+          </ListItemIcon>
+          <ListItemText primary="Notas" />
+        </ListItemButton>
+
+        {/* Categorias */}
+        <ListItemButton onClick={() => navigate("/app/category")}>
+          <ListItemIcon>
+            <CategoryOutlined sx={{ color: "text.primary" }} />
+          </ListItemIcon>
+          <ListItemText primary="Categorías" />
+        </ListItemButton>
+
+        {/* Etiquetas */}
+        <ListItemButton onClick={() => navigate("/app/tags")}>
+          <ListItemIcon>
+            <LabelOutlined sx={{ color: "text.primary" }} />
+          </ListItemIcon>
+          <ListItemText primary="Etiquetas" />
+        </ListItemButton>
+
+        <Divider sx={{ my: 1 }} />
       </List>
     </>
   );
 
   return (
     <>
-      {/* Botón de menú en móviles */}
       {!isLargeScreen && (
         <IconButton
           onClick={handleDrawerToggle}
@@ -70,7 +107,6 @@ export const SideBar = ({ drawerWidth = 240, displayName, list = [] }) => {
           flexShrink: { sm: 0 },
         }}
       >
-        {/* Sidebar fijo en pantallas grandes */}
         {isLargeScreen ? (
           <Drawer
             variant="permanent"
@@ -79,15 +115,14 @@ export const SideBar = ({ drawerWidth = 240, displayName, list = [] }) => {
               "& .MuiDrawer-paper": {
                 width: drawerWidth,
                 boxSizing: "border-box",
-
-                bgcolor: "primary.main",
+                bgcolor: "background.paper",
+                borderRight: "none",
               },
             }}
           >
             {drawerContent}
           </Drawer>
         ) : (
-          /* Sidebar deslizable en móviles */
           <Drawer
             variant="temporary"
             open={mobileOpen}
@@ -97,7 +132,7 @@ export const SideBar = ({ drawerWidth = 240, displayName, list = [] }) => {
               "& .MuiDrawer-paper": {
                 width: drawerWidth,
                 boxSizing: "border-box",
-                bgcolor: "primary.main",
+                bgcolor: "background.paper",
               },
             }}
           >

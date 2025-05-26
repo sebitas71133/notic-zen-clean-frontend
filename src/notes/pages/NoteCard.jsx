@@ -76,7 +76,6 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
   const [newImageAlt, setNewImageAlt] = useState("");
 
   const watchedImages = watch("images");
-  console.log({ watchedImages });
 
   //IMAGENES DESDE PC :
 

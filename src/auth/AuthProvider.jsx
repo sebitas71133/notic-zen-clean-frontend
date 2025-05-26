@@ -6,6 +6,7 @@ import {
   logoutReducer,
 } from "../store/slices/authSlice";
 import { useAuthStore } from "../hooks/useAuthStore";
+import { CheckingAuth } from "../components/CheckingAuth";
 
 // Se encarga de rehidratar y establecer el estado global de autenticación (Redux) al iniciar la app
 
@@ -38,7 +39,7 @@ export const AuthProvider = ({ children }) => {
   }, [dispatch]);
 
   if (status === "checking") {
-    return <div>Rehidratando...</div>;
+    return <CheckingAuth></CheckingAuth>;
   }
 
   return <>{children}</>;

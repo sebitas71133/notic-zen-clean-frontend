@@ -1,5 +1,3 @@
-// api/notesApi.js
-
 import { apiSlice } from "../src/store/slices/apiSlice";
 
 export const tagApi = apiSlice.injectEndpoints({
@@ -8,37 +6,36 @@ export const tagApi = apiSlice.injectEndpoints({
       query: ({ page = 1, limit = 10 }) => `/tag?page=${page}&limit=${limit}`,
       providesTags: ["Tags"],
     }),
-    // addNote: builder.mutation({
-    //   query: (note) => ({
-    //     url: "/note/notes",
-    //     method: "POST",
-    //     body: note,
-    //   }),
-    //   invalidatesTags: ["Notes"],
-    // }),
-    // updateNote: builder.mutation({
-    //   query: ({ id, ...note }) => ({
-    //     url: `/note/notes/${id}`,
-    //     method: "PUT",
-    //     body: note,
-    //   }),
-    //   invalidatesTags: ["Notes"],
-    // }),
-    // deleteNote: builder.mutation({
-    //   query: (id) => ({
-    //     url: `/notes/${id}`,
-    //     method: "DELETE",
-    //   }),
-    //   invalidatesTags: ["Notes"],
-    // }),
+    addTag: builder.mutation({
+      query: (tag) => ({
+        url: "/tag/create",
+        method: "POST",
+        body: tag,
+      }),
+      invalidatesTags: ["Tags"],
+    }),
+    updateTag: builder.mutation({
+      query: ({ id, ...tag }) => ({
+        url: `/tag/${id}`,
+        method: "PUT",
+        body: tag,
+      }),
+      invalidatesTags: ["Tags"],
+    }),
+    deleteTag: builder.mutation({
+      query: (id) => ({
+        url: `/tag/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Tags"],
+    }),
   }),
 });
 
 export const {
   useLazyGetTagsQuery,
-  // useAddNoteMutation,
-  // useDeleteNoteMutation,
-  // useUpdateNoteMutation,
-  // useGetNotesQuery,
-  // useLazyGetNotesQuery,
+  useGetTagsQuery,
+  useAddTagMutation,
+  useUpdateTagMutation,
+  useDeleteTagMutation,
 } = tagApi;

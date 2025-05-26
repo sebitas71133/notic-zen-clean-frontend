@@ -24,7 +24,7 @@ const NotFoundPage = () => {
         variant="contained"
         color="primary"
         component={Link}
-        to="/"
+        to="/app"
         sx={{ width: "fit-content" }}
       >
         Volver al inicio

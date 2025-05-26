@@ -5,8 +5,17 @@ import { apiSlice } from "../src/store/slices/apiSlice";
 export const notesApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getNotes: builder.query({
-      query: ({ page = 1, limit = 10 }) =>
-        `/note/notes?page=${page}&limit=${limit}`,
+      query: ({ page = 1, limit = 10, categoryId, tagId }) => {
+        let url = `/note/notes?page=${page}&limit=${limit}`;
+        if (categoryId) {
+          url += `&categoryId=${categoryId}`;
+        }
+        if (tagId) {
+          url += `&tagId=${tagId}`;
+        }
+        return url;
+      },
+
       providesTags: ["Notes"],
     }),
     addNote: builder.mutation({

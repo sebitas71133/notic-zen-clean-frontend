@@ -23,11 +23,13 @@ export const AuthHandler = () => {
 
   useEffect(() => {
     if (status === "authenticated") {
-      navigate("/app", { replace: true });
+      if (location.pathname === "/" || location.pathname.startsWith("/auth")) {
+        navigate("/app", { replace: true });
+      }
     } else if (status === "not-authenticated") {
       navigate("/auth", { replace: true });
     }
-  }, [status, navigate]);
+  }, [status, navigate, location]);
 
   if (status === "checking") {
     return <div>Cargando sesión...</div>;
