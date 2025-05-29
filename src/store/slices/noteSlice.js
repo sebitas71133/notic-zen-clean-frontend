@@ -7,11 +7,14 @@ const initialState = {
 
 export const notesSlice = createSlice({
   name: "note",
-  initialState,
+  initialState: {
+    activeNote: JSON.parse(localStorage.getItem("activeNote")) || null,
+  },
   reducers: {
     setActiveNote: (state, action) => {
       state.activeNote = action.payload;
       console.log(state.activeNote);
+      localStorage.setItem("activeNote", JSON.stringify(action.payload));
     },
     clearActiveNote: (state) => {
       state.activeNote = null;

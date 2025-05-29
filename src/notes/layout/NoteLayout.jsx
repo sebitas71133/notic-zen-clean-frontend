@@ -9,6 +9,7 @@ import { SideBar } from "../components/SideBar";
 import { useAuthStore } from "../../hooks/useAuthStore.js";
 import { useGetCategoriesQuery } from "../../../services/categoryApi.js";
 import { useGetTagsQuery } from "../../../services/tagApi.js";
+import { useGetNotesQuery } from "../../../services/noteApi.js";
 
 const drawerWidth = 280;
 
@@ -23,7 +24,13 @@ export const NoteLayout = () => {
     data: tagsData,
     isLoading: isTagsLoading,
     isError: isTagsError,
-  } = useGetTagsQuery({ page: 1, limit: 10 });
+  } = useGetTagsQuery({});
+
+  const {
+    data: notesData = [],
+    isLoading: isNotesLoading,
+    isError: isNotesError,
+  } = useGetNotesQuery({});
 
   const { user } = useAuthStore();
 
@@ -35,8 +42,15 @@ export const NoteLayout = () => {
     return <div>Cargando tags...</div>;
   }
 
+  if (isNotesLoading || !notesData) {
+    return <div>Cargando tags...</div>;
+  }
+
+  const notesTotal = notesData.data.length ?? 0;
   const categories = categoriesData.data;
-  const tags = tagsData.data;
+  const totalCategories = categories.length ?? 0;
+  const tags = tagsData.data; //Para NoteCard
+  const totalTags = tags.length ?? 0;
 
   console.log({ tags });
   return (
@@ -53,7 +67,16 @@ export const NoteLayout = () => {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
 
-        <Outlet context={{ userId: user.id, categories, tags }}></Outlet>
+        <Outlet
+          context={{
+            userId: user.id,
+            categories,
+            totalTags,
+            tags,
+            totalCategories,
+            notesTotal,
+          }}
+        ></Outlet>
       </Box>
     </Box>
   );

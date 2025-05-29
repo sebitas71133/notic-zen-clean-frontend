@@ -10,7 +10,12 @@ import {
   IconButton,
   Paper,
   Modal,
+  CircularProgress,
+  Chip,
+  Tooltip,
 } from "@mui/material";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 import { NoteAdd as NoteAddIcon } from "@mui/icons-material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -25,14 +30,17 @@ import {
 import { useOutletContext } from "react-router-dom";
 
 export const TagsPage = () => {
-  // const { data: tags = [], isLoading } = useGetTagsQuery({
-  //   page: 1,
-  //   limit: 100,
-  // });
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
 
-  const { notes, user, categories, tags } = useOutletContext();
+  const { totalTags } = useOutletContext();
 
-  console.log({ tags });
+  const { data: tagsData = [], isLoading: isLoadingTags } = useGetTagsQuery({
+    page: page,
+    limit: limit,
+  });
+
+  const totalPages = Math.ceil(totalTags / limit);
 
   const [addTag] = useAddTagMutation();
   const [updateTag] = useUpdateTagMutation();
@@ -45,6 +53,8 @@ export const TagsPage = () => {
     setSelectedTag(tag);
     setIsEditModalOpen(true);
   };
+
+  console.log({ tagsData });
 
   const handleDeleteTag = async (tag) => {
     if (!tag?.id) return;
@@ -93,6 +103,10 @@ export const TagsPage = () => {
     }
   };
 
+  if (isLoadingTags || !tagsData) {
+    return <CircularProgress size={20} />;
+  }
+
   return (
     <Box>
       <Box
@@ -113,57 +127,57 @@ export const TagsPage = () => {
         </Button>
       </Box>
 
-      <Grid container spacing={3}>
-        {tags.length > 0 ? (
-          tags
-            .filter((tag) => tag.userId !== null)
-            .map((tag) => (
-              <Grid item xs={12} sm={6} md={4} key={tag.id}>
-                <Card sx={{ height: "100%" }}>
-                  <CardContent
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
+      <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 1.5,
+          mb: 4,
+        }}
+      >
+        {tagsData.data.length > 0 ? (
+          tagsData.data.map((tag) => (
+            <Chip
+              key={tag.id}
+              label={tag.name}
+              sx={{
+                fontSize: "1rem",
+                padding: "0 8px",
+                backgroundColor: "#f5f5f5",
+                "&:hover": {
+                  backgroundColor: "#e0e0e0",
+                },
+                color: "primary.main",
+              }}
+              onClick={() => handleEditTag(tag)}
+              deleteIcon={
+                <Tooltip title="Eliminar">
+                  <DeleteIcon
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteTag(tag);
                     }}
-                  >
-                    <Typography variant="h6">{tag.name}</Typography>
-                    <Box>
-                      <IconButton
-                        color="primary"
-                        size="small"
-                        onClick={() => handleEditTag(tag)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        color="error"
-                        size="small"
-                        onClick={() => handleDeleteTag(tag)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))
+                  />
+                </Tooltip>
+              }
+              onDelete={tag.userId ? () => {} : undefined}
+            />
+          ))
         ) : (
-          <Grid item xs={12}>
-            <Paper sx={{ p: 3, textAlign: "center" }}>
-              <Typography>No hay etiquetas todavía.</Typography>
-              <Button
-                variant="contained"
-                startIcon={<NoteAddIcon />}
-                onClick={() => handleEditTag({ name: "" })}
-                sx={{ mt: 2 }}
-              >
-                Crear Etiqueta
-              </Button>
-            </Paper>
-          </Grid>
+          <Paper sx={{ p: 3, textAlign: "center", width: "100%" }}>
+            <Typography>No hay etiquetas todavía.</Typography>
+            <Button
+              variant="contained"
+              startIcon={<NoteAddIcon />}
+              onClick={() => handleEditTag({ name: "" })}
+              sx={{ mt: 2 }}
+            >
+              Crear Etiqueta
+            </Button>
+          </Paper>
         )}
-      </Grid>
+      </Box>
 
       {selectedTag && (
         <Modal open={isEditModalOpen} onClose={handleCloseModal}>
@@ -203,6 +217,14 @@ export const TagsPage = () => {
           </Box>
         </Modal>
       )}
+
+      <Stack spacing={2} mt={5} alignItems="center">
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={(_, value) => setPage(value)}
+        />
+      </Stack>
     </Box>
   );
 };

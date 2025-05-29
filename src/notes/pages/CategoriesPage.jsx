@@ -180,27 +180,26 @@ export const CategoriesPage = () => {
 
       <Grid container spacing={3}>
         {categories.length > 0 ? (
-          categories
-            .filter((category) => category.user_id !== null)
-            .map((category) => (
-              <Grid item xs={12} sm={6} md={4} key={category.id}>
-                <Card
+          categories.map((category) => (
+            <Grid item xs={12} sm={6} md={4} key={category.id}>
+              <Card
+                sx={{
+                  height: "100%",
+                  borderLeft: `8px solid ${category.color}`,
+                }}
+              >
+                <CardContent
                   sx={{
-                    height: "100%",
-                    borderLeft: `8px solid ${category.color}`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                   }}
                 >
-                  <CardContent
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Typography variant="h6" gutterBottom>
-                      {category.name}
-                    </Typography>
+                  <Typography variant="h6" gutterBottom>
+                    {category.name}
+                  </Typography>
 
+                  {category.user_id !== null && (
                     <Box>
                       <IconButton
                         color="primary"
@@ -217,10 +216,11 @@ export const CategoriesPage = () => {
                         <DeleteIcon />
                       </IconButton>
                     </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))
+                  )}
+                </CardContent>
+              </Card>
+            </Grid>
+          ))
         ) : (
           <Grid item xs={12}>
             <Paper sx={{ p: 3, textAlign: "center" }}>

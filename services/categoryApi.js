@@ -23,14 +23,14 @@ export const categoryApi = apiSlice.injectEndpoints({
         method: "PUT",
         body: category,
       }),
-      invalidatesTags: ["Categories"],
+      invalidatesTags: ["Categories", "Notes"],
     }),
     deleteCategory: builder.mutation({
       query: (id) => ({
         url: `/category/categories/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Categories"],
+      invalidatesTags: ["Categories", "Notes"],
     }),
   }),
 });

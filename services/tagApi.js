@@ -3,7 +3,7 @@ import { apiSlice } from "../src/store/slices/apiSlice";
 export const tagApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getTags: builder.query({
-      query: ({ page = 1, limit = 10 }) => `/tag?page=${page}&limit=${limit}`,
+      query: ({ page = 1, limit = 100 }) => `/tag?page=${page}&limit=${limit}`,
       providesTags: ["Tags"],
     }),
     addTag: builder.mutation({
@@ -20,14 +20,14 @@ export const tagApi = apiSlice.injectEndpoints({
         method: "PUT",
         body: tag,
       }),
-      invalidatesTags: ["Tags"],
+      invalidatesTags: ["Tags", "Notes"],
     }),
     deleteTag: builder.mutation({
       query: (id) => ({
         url: `/tag/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Tags"],
+      invalidatesTags: ["Tags", "Notes"],
     }),
   }),
 });

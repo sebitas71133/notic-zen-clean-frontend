@@ -19,6 +19,8 @@ import {
   DialogTitle,
   Checkbox,
   FormHelperText,
+  CircularProgress,
+  Autocomplete,
 } from "@mui/material";
 import {
   Save as SaveIcon,
@@ -37,6 +39,7 @@ import { useSelector } from "react-redux";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import {
   useAddNoteMutation,
+  useDeleteNoteMutation,
   useUpdateNoteMutation,
 } from "../../../services/noteApi";
 import { Gallery } from "../components/Gallery";
@@ -44,6 +47,16 @@ import { Gallery } from "../components/Gallery";
 import { Stack } from "@mui/material";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import { toast } from "react-toastify";
+
+const MAX_LENGTH = 500;
+
+const toBoolean = (value) => {
+  if (value) {
+    return "true";
+  } else {
+    return "false";
+  }
+};
 
 export const NoteCard = ({ noteId = "new", onBack }) => {
   const { categories, tags, userId } = useOutletContext();
@@ -53,6 +66,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
   const navigate = useNavigate();
   const { activeNote } = useSelector((state) => state.note);
 
+  console.log({ activeNoteCard: activeNote });
   const {
     register,
     handleSubmit,
@@ -67,8 +81,12 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
       categoryId: "",
       tags: [],
       images: [],
+      isPinned: false,
+      isArchived: false,
     },
   });
+
+  const [deleteNote] = useDeleteNoteMutation();
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openImageDialog, setOpenImageDialog] = useState(false);
@@ -109,7 +127,11 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
         ...data,
         tags: data.tags ?? [],
         images: data.images ?? [],
+        isPinned: toBoolean(data.isPinned),
+        isArchived: toBoolean(data.isArchived),
       };
+
+      console.log({ payload });
 
       let response;
       if (isNewNote) {
@@ -134,13 +156,41 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
         `,
       });
 
-      console.log(payload);
-
       navigate("/app");
     } catch (err) {
-      setValue("images", activeNote.images || []);
+      console.log(err);
+      setValue("images", activeNote?.images || []);
+
       console.error("❌ Error al guardar nota:", err);
       Swal.fire("Oops", `${err.data.error}`);
+    }
+  };
+
+  const handleDeleteNote = async () => {
+    if (!activeNote) return;
+
+    console.log({ activeNoteId: activeNote.id });
+
+    const result = await Swal.fire({
+      title: `¿Eliminar nota "${activeNote.title}"?`,
+      text: "Esta acción no se puede deshacer",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteNote(activeNote.id).unwrap();
+        Swal.fire("Nota eliminada", "", "success");
+        navigate("/app");
+      } catch (err) {
+        console.error("Error al eliminar nota:", err);
+        Swal.fire("Oops", err.data?.error || "Ocurrió un error", "error");
+      }
     }
   };
 
@@ -174,8 +224,15 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
       setValue("categoryId", activeNote.categoryId || "");
       setValue("tags", activeNote.tags?.map((t) => t.id) || []);
       setValue("images", activeNote.images || []);
+      setValue("isPinned", activeNote.isPinned || false);
+      setValue("isArchived", activeNote.isArchived || false);
     }
   }, [activeNote, isNewNote, setValue]);
+
+  const isPinned = watch("isPinned");
+  const isArchived = watch("isArchived");
+
+  console.log(isArchived);
 
   useEffect(() => {
     const handlePaste = (event) => {
@@ -222,22 +279,22 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
           {!isNewNote && (
             <>
               <Tooltip title="Fijar">
-                <IconButton>
-                  <PushPinIcon
-                    color={activeNote?.isPinned ? "secondary" : "inherit"}
-                  />
+                <IconButton onClick={() => setValue("isPinned", !isPinned)}>
+                  <PushPinIcon color={isPinned ? "primary" : "inherit"} />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Archivar">
-                <IconButton>
-                  {activeNote?.isArchived ? <UnarchiveIcon /> : <ArchiveIcon />}
+
+              <Tooltip title={isArchived ? "Desarchivar" : "Archivar"}>
+                <IconButton onClick={() => setValue("isArchived", !isArchived)}>
+                  {isArchived ? (
+                    <UnarchiveIcon color="primary" />
+                  ) : (
+                    <ArchiveIcon />
+                  )}
                 </IconButton>
               </Tooltip>
               <Tooltip title="Eliminar">
-                <IconButton
-                  onClick={() => setOpenDeleteDialog(true)}
-                  color="error"
-                >
+                <IconButton onClick={() => handleDeleteNote()} color="error">
                   <DeleteIcon />
                 </IconButton>
               </Tooltip>
@@ -246,11 +303,19 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
           <Button
             type="submit"
             variant="contained"
-            startIcon={<SaveIcon />}
+            startIcon={
+              isLoadingCreateNote || isLoadingSaveNote ? (
+                <CircularProgress size={20} />
+              ) : (
+                <SaveIcon />
+              )
+            }
             sx={{ ml: 1 }}
             disabled={isLoadingCreateNote || isLoadingSaveNote}
           >
-            Guardar
+            {isLoadingCreateNote || isLoadingSaveNote
+              ? "Guardando..."
+              : "Guardar"}
           </Button>
         </Box>
       </Box>
@@ -262,26 +327,13 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
           sx={{ border: 0, p: 0, m: 0 }}
         >
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <TextField
                 label="Título"
                 fullWidth
                 {...register("title", { required: "El título es requerido" })}
                 error={!!errors.title}
                 helperText={errors.title?.message}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Contenido"
-                fullWidth
-                multiline
-                minRows={4}
-                {...register("content")}
-
-                // {...register("content", { required: "El texto es requerido" })}
-                // error={!!errors.content}
-                // helperText={errors.content?.message}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -293,62 +345,86 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
                   <FormControl fullWidth error={!!fieldState.error}>
                     <InputLabel>Categoría</InputLabel>
                     <Select {...field} label="Categoría">
-                      <MenuItem value="">Sin categoría</MenuItem>
                       {categories.map((cat) => (
                         <MenuItem key={cat.id} value={cat.id}>
                           {cat.name}
                         </MenuItem>
                       ))}
                     </Select>
-                    {fieldState.error && (
-                      <FormHelperText>
-                        {fieldState.error.message}
-                      </FormHelperText>
-                    )}
+                    <FormHelperText>{fieldState.error?.message}</FormHelperText>
                   </FormControl>
                 )}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+
+            {/* Contenido */}
+            <Grid item xs={12}>
+              <TextField
+                label="Contenido"
+                fullWidth
+                multiline
+                minRows={6}
+                // inputProps={{ maxLength: 10 }}
+                {...register("content", {
+                  maxLength: {
+                    value: MAX_LENGTH,
+                    message: `El contenido no debe superar los ${MAX_LENGTH} caracteres`,
+                  },
+                })}
+                error={!!errors.content}
+                helperText={errors.content?.message}
+              />
+              <Typography
+                variant="body2"
+                color={
+                  watch("content", "16px").length > MAX_LENGTH
+                    ? "error"
+                    : "textSecondary"
+                }
+                align="right"
+              >
+                {watch("content", "").length}/{MAX_LENGTH}
+              </Typography>
+            </Grid>
+
+            {/* Tags */}
+            <Grid item xs={12}>
               <Controller
                 name="tags"
                 control={control}
-                rules={{
-                  validate: (value) =>
-                    value.length > 0 || "Selecciona al menos una etiqueta",
-                }}
-                render={({ field, fieldState }) => (
-                  <FormControl fullWidth error={!!fieldState.error}>
-                    <InputLabel>Etiquetas</InputLabel>
-                    <Select
-                      multiple
-                      {...field}
-                      renderValue={(selected) =>
-                        selected
-                          .map((id) => tags.find((t) => t.id === id)?.name)
-                          .join(", ")
-                      }
-                    >
-                      {tags
-                        .filter(
-                          (tag) => tag.userId === userId || tag.userId === null
-                        )
-                        .map((tag) => (
-                          <MenuItem key={tag.id} value={tag.id}>
-                            <Checkbox checked={field.value.includes(tag.id)} />
-                            {tag.name}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                    {fieldState.error && (
-                      <FormHelperText>
-                        {fieldState.error.message}
-                      </FormHelperText>
+                render={({ field }) => (
+                  <Autocomplete
+                    multiple
+                    options={tags}
+                    getOptionLabel={(tag) => tag.name}
+                    value={tags.filter((tag) => field.value.includes(tag.id))}
+                    onChange={(e, newValue) =>
+                      field.onChange(newValue.map((tag) => tag.id))
+                    }
+                    renderTags={(value, getTagProps) =>
+                      value.map((option, index) => {
+                        const { key, ...tagProps } = getTagProps({ index });
+                        return (
+                          <Chip
+                            key={option.id}
+                            label={option.name}
+                            {...tagProps}
+                          />
+                        );
+                      })
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Etiquetas"
+                        placeholder="Agregar etiquetas"
+                      />
                     )}
-                  </FormControl>
+                  />
                 )}
               />
             </Grid>
+
             <Grid item xs={12}>
               <Box sx={{ mb: 2 }}>
                 <Stack
@@ -376,6 +452,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
                 accept="image/*"
                 type="file"
                 hidden
+                multiple
                 id="upload-image"
                 onChange={handleFileImageUpload}
               />

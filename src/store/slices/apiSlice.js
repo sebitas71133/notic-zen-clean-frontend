@@ -4,6 +4,7 @@ export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL,
+    credentials: "include",
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("token"); // o desde redux si prefieres
 
