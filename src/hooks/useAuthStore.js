@@ -59,8 +59,11 @@ export const useAuthStore = () => {
         password: password1,
       }).unwrap();
 
-      dispatch(loginReducer({ token: token, user: data }));
-      toast.success(`Registro exitoso, ${data.name}!`);
+      // dispatch(loginReducer({ token: token, user: data }));
+      toast.success(
+        `Registro exitoso ${data.name}! , Verifique su correo para activar su cuenta`
+      );
+      startLogout();
     } catch (err) {
       startLogout();
       toast.error(err.data?.error || "Error al registrarse");
