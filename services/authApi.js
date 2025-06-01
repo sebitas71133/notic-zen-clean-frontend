@@ -24,9 +24,27 @@ export const authApi = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getUsers: builder.query({
+      query: () => ({
+        url: "/auth/users",
+        method: "GET",
+      }),
+    }),
+    updateRole: builder.mutation({
+      query: ({ userId, roleId }) => ({
+        url: "/auth/users/update-role",
+        method: "POST",
+        body: { userId, roleId },
+      }),
+    }),
   }),
 });
 
 // Hooks auto‑generados
-export const { useLoginMutation, useRegisterMutation, useLazyRenewTokenQuery } =
-  authApi;
+export const {
+  useLoginMutation,
+  useRegisterMutation,
+  useLazyRenewTokenQuery,
+  useGetUsersQuery,
+  useUpdateRoleMutation,
+} = authApi;

@@ -9,9 +9,9 @@ import { useAuthStore } from "../hooks/useAuthStore";
 // Redirige al usuario a /app o /auth, según su estado.
 
 export const AuthHandler = () => {
-  const { status, checkAuthToken } = useAuthStore();
+  const { status, checkAuthToken, user } = useAuthStore();
   const navigate = useNavigate();
-
+  console.log({ user });
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -24,7 +24,11 @@ export const AuthHandler = () => {
   useEffect(() => {
     if (status === "authenticated") {
       if (location.pathname === "/" || location.pathname.startsWith("/auth")) {
-        navigate("/app", { replace: true });
+        if (user?.role.name === "admin") {
+          navigate("/admin", { replace: true });
+        } else {
+          navigate("/app", { replace: true });
+        }
       }
     } else if (status === "not-authenticated") {
       navigate("/auth", { replace: true });

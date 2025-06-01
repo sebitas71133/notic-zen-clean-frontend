@@ -14,13 +14,43 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
+import { useUpdateRoleMutation } from "../../../services/authApi";
+import Swal from "sweetalert2";
+
+const roles = [
+  { id: 1, name: "admin" },
+  { id: 2, name: "user" },
+];
 
 export const UsersTable = ({ users }) => {
   const dispatch = useDispatch();
   const { control, handleSubmit } = useForm();
 
-  const handleRoleChange = (uid, newRole) => {
-    dispatch(updateUserRole({ uid, newRole }));
+  const [updateRole, { isLoading: isLoadingUpdateRole }] =
+    useUpdateRoleMutation();
+
+  const handleRoleChange = async (userId, roleId) => {
+    try {
+      const response = await updateRole({ userId, roleId });
+
+      Swal.fire({
+        title: `Rol actualizado !`,
+        icon: "success",
+        width: 600,
+        padding: "3em",
+        color: "#716add",
+        backdrop: `
+                      rgba(0,0,123,0.4)
+                      url("/images/nyan-cat.gif")
+                      right top
+                      no-repeat
+                    `,
+      });
+      console.log("✅ Rol actualizado:", response);
+    } catch (err) {
+      console.error("❌ Error al actualizar rol:", err);
+      wal.fire("Oops", `${err.data.error}`);
+    }
   };
 
   return (
@@ -38,27 +68,30 @@ export const UsersTable = ({ users }) => {
         </TableHead>
         <TableBody>
           {users.map((user) => (
-            <TableRow key={user.uid}>
+            <TableRow key={user.id}>
               <TableCell>
                 <Typography variant="body1">{user.email}</Typography>
               </TableCell>
               <TableCell>
                 <Controller
-                  name={`role-${user.uid}`}
+                  name={`role-${user.id}`}
                   control={control}
-                  defaultValue={user.role}
+                  defaultValue={user.role.id}
                   render={({ field }) => (
                     <Select
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
-                        handleRoleChange(user.uid, e.target.value);
+                        handleRoleChange(user.id, e.target.value);
                       }}
                       size="small"
                       sx={{ minWidth: 120 }}
                     >
-                      <MenuItem value="usuario">Usuario</MenuItem>
-                      <MenuItem value="admin">Admin</MenuItem>
+                      {roles.map((role) => (
+                        <MenuItem key={role.id} value={role.id}>
+                          {role.name === "admin" ? "Admin" : "Usuario"}
+                        </MenuItem>
+                      ))}
                     </Select>
                   )}
                 />

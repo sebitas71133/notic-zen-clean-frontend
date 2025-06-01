@@ -18,7 +18,7 @@ const NotFoundPage = () => {
         Ups... Algo salió mal
       </Typography>
       <Typography variant="body1" sx={{ mb: 2 }}>
-        La página que buscas no existe.
+        La página que buscas no existe o Acceso denegado.
       </Typography>
       <Button
         variant="contained"
