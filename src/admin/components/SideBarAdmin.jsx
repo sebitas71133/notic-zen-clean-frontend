@@ -46,11 +46,19 @@ export const SideBarAdmin = ({ drawerWidth = 240, displayName }) => {
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
+          <ListItemButton component={Link} to="/admin/dashboard">
+            <ListItemIcon>
+              <PestControlOutlinedIcon sx={{ color: "primary.main" }} />
+            </ListItemIcon>
+            <ListItemText primary="dashboard" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
           <ListItemButton component={Link} to="/admin/cloudinary">
             <ListItemIcon>
               <PestControlOutlinedIcon sx={{ color: "primary.main" }} />
             </ListItemIcon>
-            <ListItemText primary="Cloudinary" />
+            <ListItemText primary="cloudinary" />
           </ListItemButton>
         </ListItem>
       </List>

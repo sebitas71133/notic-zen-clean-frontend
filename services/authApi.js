@@ -30,6 +30,12 @@ export const authApi = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getTotalDocuments: builder.query({
+      query: () => ({
+        url: "/auth/users/documents",
+        method: "GET",
+      }),
+    }),
     updateRole: builder.mutation({
       query: ({ userId, roleId }) => ({
         url: "/auth/users/update-role",
@@ -47,4 +53,5 @@ export const {
   useLazyRenewTokenQuery,
   useGetUsersQuery,
   useUpdateRoleMutation,
+  useGetTotalDocumentsQuery,
 } = authApi;

@@ -195,7 +195,7 @@ export const NotesPage = () => {
       </Box>
 
       <Grid container spacing={3}>
-        {notesData.data.length > 0 ? (
+        {notesData.data?.length > 0 ? (
           notesData.data
             .filter((e) =>
               e.title?.toLowerCase().includes(searchTerm.toLowerCase())

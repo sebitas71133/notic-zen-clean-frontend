@@ -47,6 +47,20 @@ export const notesApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Notes"],
     }),
+    getAllImages: builder.query({
+      query: () => ({
+        url: `/note/admin/images/all`,
+        method: "GET",
+      }),
+      providesTags: ["Images"],
+    }),
+    cleanOrphanImages: builder.mutation({
+      query: () => ({
+        url: "/note/admin/images/cleanup",
+        method: "POST",
+      }),
+      invalidatesTags: ["Images"],
+    }),
   }),
 });
 
@@ -56,4 +70,6 @@ export const {
   useUpdateNoteMutation,
   useGetNotesQuery,
   useLazyGetNotesQuery,
+  useGetAllImagesQuery,
+  useCleanOrphanImagesMutation,
 } = notesApi;

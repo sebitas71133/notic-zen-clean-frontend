@@ -43,10 +43,12 @@ export const NoteLayout = () => {
   }
 
   if (isNotesLoading || !notesData) {
-    return <div>Cargando tags...</div>;
+    return <div>Cargando notas...</div>;
   }
 
-  const notesTotal = notesData.data.length ?? 0;
+  console.log({ notesData, isNotesError });
+
+  const notesTotal = notesData.data?.length ?? 0;
   const categories = categoriesData.data;
   const totalCategories = categories.length ?? 0;
   const tags = tagsData.data; //Para NoteCard

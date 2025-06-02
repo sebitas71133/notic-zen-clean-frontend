@@ -304,3 +304,112 @@
 //     </Container>
 //   );
 // };
+
+import {
+  useGetAllImagesQuery,
+  useCleanOrphanImagesMutation,
+} from "../../../services/noteApi";
+
+export const CloudinaryView = () => {
+  const {
+    data: imagesData,
+    isLoading: isLoadingImages,
+    isError,
+  } = useGetAllImagesQuery();
+  const [cleanOrphanImages, { isLoading: isCleaning }] =
+    useCleanOrphanImagesMutation({});
+
+  if (isLoadingImages) return <div>Cargando imágenes...</div>;
+  if (isError || !imagesData?.data)
+    return <div>Error al cargar las imágenes.</div>;
+
+  const { cloudinaryImages, cloudinaryImagesBD, externalImagesBD } =
+    imagesData.data;
+
+  const handleCleanOrphanImages = async () => {
+    try {
+      const res = await cleanOrphanImages().unwrap();
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>📷 Vista de Imágenes</h2>
+
+      <div style={{ marginBottom: 20 }}>
+        <button
+          onClick={handleCleanOrphanImages}
+          disabled={isCleaning}
+          style={{
+            padding: "8px 16px",
+            backgroundColor: "#e74c3c",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          {isCleaning ? "Limpiando..." : "🧹 Eliminar Imágenes Huérfanas"}
+        </button>
+      </div>
+
+      <div>
+        <h3>📦 Total en Cloudinary (API): {cloudinaryImages.length}</h3>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          {cloudinaryImages.map((id) => (
+            <img
+              key={id}
+              src={id}
+              alt={id}
+              style={{
+                width: 120,
+                height: 120,
+                objectFit: "cover",
+                borderRadius: 8,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h3>🗂️ En BD (Cloudinary): {cloudinaryImagesBD.length}</h3>
+        {cloudinaryImagesBD.map((url) => (
+          <img
+            key={url}
+            src={url}
+            alt={url}
+            style={{
+              width: 120,
+              height: 120,
+              objectFit: "cover",
+              borderRadius: 8,
+            }}
+          />
+        ))}
+      </div>
+
+      <div>
+        <h3>🌐 En BD (externas): {externalImagesBD.length}</h3>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          {externalImagesBD.map((url, idx) => (
+            <img
+              key={idx}
+              src={url}
+              alt="Imagen externa"
+              style={{
+                width: 120,
+                height: 120,
+                objectFit: "cover",
+                borderRadius: 8,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
