@@ -217,6 +217,13 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
     setValue("images", updated);
   };
 
+  const handleEditWatchedImage = (indexToUpdate, newAltText) => {
+    const updated = watchedImages.map((img, index) =>
+      index === indexToUpdate ? { ...img, altText: newAltText } : img
+    );
+    setValue("images", updated);
+  };
+
   useEffect(() => {
     if (activeNote && !isNewNote) {
       setValue("title", activeNote.title || "");
@@ -438,7 +445,13 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
                     Imágenes de la Nota
                   </Typography>
                 </Stack>
-                <Gallery images={watchedImages} onRemove={handleRemoveImage} />
+                <Gallery
+                  images={watchedImages}
+                  onRemove={handleRemoveImage}
+                  onEdit={handleEditWatchedImage}
+                  watchedImages={watch("images")}
+                  setValue={setValue}
+                />
                 <Button
                   startIcon={<ImageIcon />}
                   onClick={() => setOpenImageDialog(true)}

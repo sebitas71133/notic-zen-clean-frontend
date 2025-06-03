@@ -21,8 +21,15 @@ import {
   deleteImageFromActiveNote,
   updatedImagesReducer,
 } from "../../store/slices/noteSlice";
+// import Swal from "sweetalert2";
 
-export const Gallery = ({ images }) => {
+export const Gallery = ({
+  images,
+  onRemove,
+  onEdit,
+  watchedImages,
+  setValue,
+}) => {
   const dispatch = useDispatch();
   const { activeNote } = useSelector((state) => state.note);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -33,12 +40,38 @@ export const Gallery = ({ images }) => {
   const theme = useTheme();
 
   const handleDelete = () => {
-    if (!activeNote?.images?.length) return;
+    onRemove(currentIndex);
+    // if (!activeNote?.images?.length) return;
     dispatch(deleteImageFromActiveNote(currentIndex));
+  };
+
+  const handleSave = () => {
+    const currentImage = activeNote?.images?.[currentIndex];
+
+    if (currentImage) {
+      // Editando una imagen existente de una nota activa
+      const updatedImages = [...activeNote.images];
+      updatedImages[currentIndex] = {
+        ...updatedImages[currentIndex],
+        altText: editAltText,
+      };
+      dispatch(updatedImagesReducer(updatedImages));
+    } else {
+      // Editando una imagen nueva aún no guardada
+      const updated = watchedImages.map((img, index) =>
+        index === currentIndex ? { ...img, altText: editAltText } : img
+      );
+      setValue("images", updated); // react-hook-form
+    }
+
+    setIsEditing(false);
   };
 
   const handleEdit = () => {
     const currentImage = activeNote?.images?.[currentIndex];
+
+    console.log({ currentImage });
+
     setEditAltText(currentImage?.altText || "");
     setIsEditing(true);
   };
@@ -132,6 +165,7 @@ export const Gallery = ({ images }) => {
           <IconButton
             onClick={handleEdit}
             size="small"
+            // disabled={!activeNote?.images?.[currentIndex]}
             sx={{
               bgcolor: "rgba(0,0,0,0.5)",
               color: "white",
@@ -175,18 +209,7 @@ export const Gallery = ({ images }) => {
           />
         </DialogContent>
         <DialogActions>
-          <Button
-            variant="contained"
-            onClick={() => {
-              const updatedImages = [...activeNote.images];
-              updatedImages[currentIndex] = {
-                ...updatedImages[currentIndex],
-                altText: editAltText,
-              };
-              dispatch(updatedImagesReducer(updatedImages));
-              setIsEditing(false);
-            }}
-          >
+          <Button variant="contained" onClick={() => handleSave()}>
             Guardar
           </Button>
           <Button onClick={() => setIsEditing(false)}>Cancelar</Button>
@@ -194,91 +217,4 @@ export const Gallery = ({ images }) => {
       </Dialog>
     </Box>
   );
-
-  //   <Box sx={{ position: "relative", borderRadius: 2, overflow: "hidden" }}>
-  //     <ReactImageGallery
-  //       items={imagesR}
-  //       showThumbnails={true}
-  //       thumbnailPosition="bottom"
-  //       showPlayButton={true}
-  //       showFullscreenButton={true}
-  //       onSlide={(index) => setCurrentIndex(index)}
-  //       additionalClass="custom-gallery"
-  //     />
-
-  //     {/* BOTONES flotantes */}
-  //     <Box
-  //       sx={{
-  //         position: "absolute",
-  //         top: 8,
-  //         right: 8,
-  //         display: "flex",
-  //         gap: 1,
-  //         zIndex: 10,
-  //       }}
-  //     >
-  //       <IconButton
-  //         onClick={handleEdit}
-  //         size="small"
-  //         sx={{
-  //           bgcolor: "rgba(0,0,0,0.5)",
-  //           color: "white",
-  //           "&:hover": { bgcolor: theme.palette.primary.main },
-  //         }}
-  //       >
-  //         <EditIcon fontSize="small" />
-  //       </IconButton>
-
-  //       <IconButton
-  //         onClick={handleDelete}
-  //         size="small"
-  //         sx={{
-  //           bgcolor: "rgba(0,0,0,0.5)",
-  //           color: "white",
-  //           "&:hover": { bgcolor: theme.palette.error.main },
-  //         }}
-  //       >
-  //         <DeleteIcon fontSize="small" />
-  //       </IconButton>
-  //     </Box>
-
-  //     {/* DIALOGO para editar */}
-  //     <Dialog
-  //       open={isEditing}
-  //       onClose={() => setIsEditing(false)}
-  //       fullWidth
-  //       maxWidth="xs"
-  //     >
-  //       <DialogTitle>Editar texto alternativo</DialogTitle>
-  //       <DialogContent>
-  //         <TextField
-  //           fullWidth
-  //           label="Texto alternativo"
-  //           variant="outlined"
-  //           size="small"
-  //           value={editAltText}
-  //           onChange={(e) => setEditAltText(e.target.value)}
-  //           autoFocus
-  //         />
-  //       </DialogContent>
-  //       <DialogActions>
-  //         <Button
-  //           variant="contained"
-  //           onClick={() => {
-  //             const updatedImages = [...activeNote.images];
-  //             updatedImages[currentIndex] = {
-  //               ...updatedImages[currentIndex],
-  //               altText: editAltText,
-  //             };
-  //             dispatch(updatedImagesReducer(updatedImages));
-  //             setIsEditing(false);
-  //           }}
-  //         >
-  //           Guardar
-  //         </Button>
-  //         <Button onClick={() => setIsEditing(false)}>Cancelar</Button>
-  //       </DialogActions>
-  //     </Dialog>
-  //   </Box>
-  // );
 };
