@@ -19,6 +19,7 @@ import Stack from "@mui/material/Stack";
 import { NoteAdd as NoteAddIcon } from "@mui/icons-material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import LabelIcon from "@mui/icons-material/Label";
 import Swal from "sweetalert2";
 
 import {
@@ -28,6 +29,17 @@ import {
   useDeleteTagMutation,
 } from "../../../services/tagApi";
 import { useOutletContext } from "react-router-dom";
+
+const tagColors = [
+  "#E57373", // Red
+  "#64B5F6", // Blue
+  "#81C784", // Green
+  "#FFD54F", // Yellow
+  "#BA68C8", // Purple
+  "#4DB6AC", // Teal
+  "#FF8A65", // Orange
+  "#A1887F", // Brown
+];
 
 export const TagsPage = () => {
   const [page, setPage] = useState(1);
@@ -117,13 +129,20 @@ export const TagsPage = () => {
           mb: 3,
         }}
       >
-        <Typography variant="h4">Mis Etiquetas</Typography>
+        <Typography variant="h4" component="h1">
+          {/* <LabelIcon
+            fontSize="large"
+            color="primary"
+            sx={{ marginRight: 2 }}
+          ></LabelIcon> */}
+          🏷️ Tags
+        </Typography>
         <Button
           variant="contained"
           startIcon={<NoteAddIcon />}
           onClick={() => handleEditTag({ name: "" })}
         >
-          Nueva Etiqueta
+          ADD TAG
         </Button>
       </Box>
 
@@ -136,34 +155,45 @@ export const TagsPage = () => {
         }}
       >
         {tagsData.data.length > 0 ? (
-          tagsData.data.map((tag) => (
-            <Chip
-              key={tag.id}
-              label={tag.name}
-              sx={{
-                fontSize: "1rem",
-                padding: "0 8px",
-                backgroundColor: "#f5f5f5",
-                "&:hover": {
-                  backgroundColor: "#e0e0e0",
-                },
-                color: "primary.main",
-              }}
-              onClick={() => handleEditTag(tag)}
-              deleteIcon={
-                <Tooltip title="Eliminar">
-                  <DeleteIcon
-                    onMouseDown={(e) => e.stopPropagation()}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteTag(tag);
-                    }}
-                  />
-                </Tooltip>
-              }
-              onDelete={tag.userId ? () => {} : undefined}
-            />
-          ))
+          tagsData.data.map((tag, index) => {
+            const color = tagColors[index % tagColors.length];
+
+            return (
+              <Chip
+                key={tag.id}
+                label={tag.name}
+                sx={{
+                  fontSize: "0.95rem",
+                  px: 1.5,
+                  py: 0.5,
+                  borderRadius: "999px",
+                  backgroundColor: color,
+                  color: "text.primary.main",
+                  "&:hover": {
+                    opacity: 0.85,
+                    cursor: "pointer",
+                  },
+                  transition: "all 0.2s ease-in-out",
+                }}
+                onClick={() => handleEditTag(tag)}
+                deleteIcon={
+                  <Tooltip title="Eliminar">
+                    <DeleteIcon
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteTag(tag);
+                      }}
+                      sx={{
+                        color: color,
+                      }}
+                    />
+                  </Tooltip>
+                }
+                onDelete={tag.userId ? () => {} : undefined}
+              />
+            );
+          })
         ) : (
           <Paper sx={{ p: 3, textAlign: "center", width: "100%" }}>
             <Typography>No hay etiquetas todavía.</Typography>

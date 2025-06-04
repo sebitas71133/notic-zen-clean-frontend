@@ -26,10 +26,19 @@ export const DashboardPage = () => {
   ];
 
   return (
-    <Box p={4}>
-      <Typography variant="h4" gutterBottom>
-        📊 Dashboard
-      </Typography>
+    <Box p={0}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <Typography variant="h4" gutterBottom>
+          📊 Dashboard
+        </Typography>
+      </Box>
 
       <Grid container spacing={3}>
         {stats.map(({ label, value, icon }) => (

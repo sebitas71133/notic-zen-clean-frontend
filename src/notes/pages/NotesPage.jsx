@@ -29,6 +29,7 @@ import {
   Archive as ArchiveIcon,
   Clear as ClearIcon,
 } from "@mui/icons-material";
+import NotesIcon from "@mui/icons-material/Notes";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { setActiveNote } from "../../store/slices/noteSlice";
 import { useDispatch } from "react-redux";
@@ -44,6 +45,8 @@ export const NotesPage = () => {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [tagFilter, setTagFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [sortTitle, setSortTitle] = useState("asc");
+  const [sortDate, setSortDate] = useState("");
 
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
@@ -59,6 +62,8 @@ export const NotesPage = () => {
     ...(categoryFilter && { categoryId: categoryFilter }),
     ...(tagFilter && { tagId: tagFilter }),
     ...(statusFilter && { statusFilter: statusFilter }),
+    ...(sortTitle && { sortTitle: sortTitle }),
+    ...(sortDate && { sortDate: sortDate }),
   });
 
   console.log({ notesTotal, limit });
@@ -95,7 +100,12 @@ export const NotesPage = () => {
         }}
       >
         <Typography variant="h4" component="h1">
-          Mis Notas
+          {/* <NotesIcon
+            fontSize="large"
+            color="primary"
+            sx={{ marginRight: 2 }}
+          ></NotesIcon> */}
+          📝 Notes
         </Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
           <Button
@@ -103,7 +113,7 @@ export const NotesPage = () => {
             startIcon={<NoteAddIcon />}
             onClick={handleNewNote}
           >
-            Nueva Nota
+            ADD NOTE
           </Button>
 
           <ExportMenuNotes notes={notesData.data} />
@@ -193,6 +203,30 @@ export const NotesPage = () => {
                 {/* <MenuItem value="active">Activas</MenuItem> */}
                 <MenuItem value="pinned">Fijadas</MenuItem>
                 <MenuItem value="archived">Archivadas</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+              <InputLabel>Ordenar por título</InputLabel>
+              <Select
+                value={sortTitle}
+                label="Ordenar por título"
+                onChange={(e) => setSortTitle(e.target.value)}
+              >
+                <MenuItem value="">Sin orden</MenuItem>
+                <MenuItem value="asc">A - Z</MenuItem>
+                <MenuItem value="desc">Z - A</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+              <InputLabel>Ordenar por fecha</InputLabel>
+              <Select
+                value={sortDate}
+                label="Ordenar por fecha"
+                onChange={(e) => setSortDate(e.target.value)}
+              >
+                <MenuItem value="">Sin orden</MenuItem>
+                <MenuItem value="desc">Más recientes</MenuItem>
+                <MenuItem value="asc">Más antiguas</MenuItem>
               </Select>
             </FormControl>
 

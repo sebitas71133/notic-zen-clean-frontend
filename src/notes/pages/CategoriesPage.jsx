@@ -17,6 +17,7 @@ import { NoteAdd as NoteAddIcon } from "@mui/icons-material";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CategoryIcon from "@mui/icons-material/Category";
 
 import { useOutletContext } from "react-router-dom";
 
@@ -178,7 +179,12 @@ export const CategoriesPage = () => {
         }}
       >
         <Typography variant="h4" component="h1">
-          Mis Categorias
+          {/* <CategoryIcon
+            fontSize="large"
+            color="primary"
+            sx={{ marginRight: 2 }}
+          ></CategoryIcon> */}
+          🗂️ Categories
         </Typography>
         <Button
           variant="contained"
