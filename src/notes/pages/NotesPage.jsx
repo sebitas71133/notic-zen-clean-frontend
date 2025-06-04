@@ -32,6 +32,7 @@ import { setActiveNote } from "../../store/slices/noteSlice";
 import { useDispatch } from "react-redux";
 import { useGetNotesQuery } from "../../../services/noteApi";
 import { useGetTagsQuery } from "../../../services/tagApi";
+import { ExportMenuNotes } from "../components/ExportMenuNotes";
 
 export const NotesPage = () => {
   const { categories } = useOutletContext();
@@ -70,7 +71,7 @@ export const NotesPage = () => {
 
   console.log({ searchTerm });
 
-  if (isNotesLoading || !notesData) {
+  if (isNotesLoading || !notesData.data) {
     return <div>Cargando notas...</div>;
   }
 
@@ -87,13 +88,17 @@ export const NotesPage = () => {
         <Typography variant="h4" component="h1">
           Mis Notas
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<NoteAddIcon />}
-          onClick={handleNewNote}
-        >
-          Nueva Nota
-        </Button>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button
+            variant="contained"
+            startIcon={<NoteAddIcon />}
+            onClick={handleNewNote}
+          >
+            Nueva Nota
+          </Button>
+
+          <ExportMenuNotes notes={notesData.data} />
+        </Box>
       </Box>
 
       {/* SEARCH AND FILTER */}
@@ -201,7 +206,7 @@ export const NotesPage = () => {
               e.title?.toLowerCase().includes(searchTerm.toLowerCase())
             )
             .map((note) => (
-              <Grid item xs={6} sm={4} md={4} key={note.id}>
+              <Grid item xs={6} sm={3} md={3} key={note.id}>
                 <Card
                   sx={{
                     // height: "100%",
@@ -209,6 +214,7 @@ export const NotesPage = () => {
                     boxShadow: 3,
                     display: "flex",
                     flexDirection: "column",
+                    height: "320px",
                   }}
                 >
                   <CardActionArea
@@ -251,7 +257,7 @@ export const NotesPage = () => {
                           sx={{
                             display: "-webkit-box",
                             WebkitBoxOrient: "vertical",
-                            WebkitLineClamp: 2,
+                            WebkitLineClamp: 1,
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             whiteSpace: "normal",
@@ -285,7 +291,7 @@ export const NotesPage = () => {
                         sx={{
                           display: "-webkit-box",
                           WebkitBoxOrient: "vertical",
-                          WebkitLineClamp: 3,
+                          WebkitLineClamp: 1,
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           whiteSpace: "normal",
