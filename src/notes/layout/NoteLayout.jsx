@@ -18,19 +18,19 @@ export const NoteLayout = () => {
     data: categoriesData,
     isLoading: isCategoriesLoading,
     isError: isCategoryError,
-  } = useGetCategoriesQuery({ page: 1, limit: 10 });
+  } = useGetCategoriesQuery({ page: 1, limit: 500 });
 
   const {
     data: tagsData,
     isLoading: isTagsLoading,
     isError: isTagsError,
-  } = useGetTagsQuery({});
+  } = useGetTagsQuery({ page: 1, limit: 500 });
 
   const {
     data: notesData = [],
     isLoading: isNotesLoading,
     isError: isNotesError,
-  } = useGetNotesQuery({});
+  } = useGetNotesQuery({ page: 1, limit: 500 });
 
   const { user } = useAuthStore();
 
@@ -54,7 +54,6 @@ export const NoteLayout = () => {
   const tags = tagsData.data; //Para NoteCard
   const totalTags = tags.length ?? 0;
 
-  console.log({ tags });
   return (
     <Box
       sx={{

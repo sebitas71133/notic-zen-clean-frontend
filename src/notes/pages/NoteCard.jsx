@@ -66,6 +66,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
   const navigate = useNavigate();
   const { activeNote } = useSelector((state) => state.note);
 
+  console.log({ categories });
   console.log({ activeNoteCard: activeNote });
   const {
     register,
@@ -88,7 +89,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
 
   const [deleteNote] = useDeleteNoteMutation();
 
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  // const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openImageDialog, setOpenImageDialog] = useState(false);
   const [newImageUrl, setNewImageUrl] = useState("");
   const [newImageAlt, setNewImageAlt] = useState("");
@@ -338,7 +339,13 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
               <TextField
                 label="Título"
                 fullWidth
-                {...register("title", { required: "El título es requerido" })}
+                {...register("title", {
+                  required: "El título es requerido",
+                  maxLength: {
+                    value: 100,
+                    message: `El contenido no debe superar los ${100} caracteres`,
+                  },
+                })}
                 error={!!errors.title}
                 helperText={errors.title?.message}
               />
@@ -354,7 +361,16 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
                     <Select {...field} label="Categoría">
                       {categories.map((cat) => (
                         <MenuItem key={cat.id} value={cat.id}>
-                          {cat.name}
+                          <Box display="flex" alignItems="center" gap={1}>
+                            <Box
+                              width={12}
+                              height={12}
+                              borderRadius="50%"
+                              bgcolor={cat.color}
+                              flexShrink={0}
+                            />
+                            {cat.name}
+                          </Box>
                         </MenuItem>
                       ))}
                     </Select>

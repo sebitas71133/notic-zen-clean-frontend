@@ -5,7 +5,7 @@ import { apiSlice } from "../src/store/slices/apiSlice";
 export const notesApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getNotes: builder.query({
-      query: ({ page = 1, limit = 50, categoryId, tagId, statusFilter }) => {
+      query: ({ page = 1, limit = 10, categoryId, tagId, statusFilter }) => {
         let url = `/note/notes?page=${page}&limit=${limit}`;
         if (categoryId) {
           url += `&categoryId=${categoryId}`;
@@ -18,6 +18,9 @@ export const notesApi = apiSlice.injectEndpoints({
         }
         if (statusFilter === "archived") {
           url += `&isArchived=${"true"}`;
+        }
+        if (statusFilter === "all") {
+          url += `&isArchived=${"false"}`;
         }
         return url;
       },

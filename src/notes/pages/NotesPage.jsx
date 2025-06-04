@@ -18,6 +18,8 @@ import {
   Tooltip,
   Paper,
   CardMedia,
+  Stack,
+  Pagination,
 } from "@mui/material";
 import {
   NoteAdd as NoteAddIcon,
@@ -43,16 +45,25 @@ export const NotesPage = () => {
   const [tagFilter, setTagFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const { notesTotal } = useOutletContext();
+
   const { data: notesData = [], isLoading: isNotesLoading } = useGetNotesQuery({
-    page: 1,
-    limit: 10,
+    page: page,
+    limit: limit,
     ...(categoryFilter && { categoryId: categoryFilter }),
     ...(tagFilter && { tagId: tagFilter }),
     ...(statusFilter && { statusFilter: statusFilter }),
   });
+
+  console.log({ notesTotal, limit });
+
+  const totalPages = Math.ceil(notesTotal / limit);
 
   const { data: tagsData = [] } = useGetTagsQuery({ page: 1, limit: 50 });
 
@@ -68,8 +79,6 @@ export const NotesPage = () => {
     setTagFilter("");
     setStatusFilter("all");
   };
-
-  console.log({ searchTerm });
 
   if (isNotesLoading || !notesData.data) {
     return <div>Cargando notas...</div>;
@@ -390,6 +399,14 @@ export const NotesPage = () => {
           </Grid>
         )}
       </Grid>
+
+      <Stack spacing={2} mt={5} alignItems="center">
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={(_, value) => setPage(value)}
+        />
+      </Stack>
     </Box>
   );
 };

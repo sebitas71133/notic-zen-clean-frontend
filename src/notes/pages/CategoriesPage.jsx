@@ -10,6 +10,8 @@ import {
   IconButton,
   Paper,
   Modal,
+  Stack,
+  Pagination,
 } from "@mui/material";
 import { NoteAdd as NoteAddIcon } from "@mui/icons-material";
 
@@ -21,6 +23,7 @@ import { useOutletContext } from "react-router-dom";
 import {
   useAddCategoryMutation,
   useDeleteCategoryMutation,
+  useGetCategoriesQuery,
   useUpdateCategoryMutation,
 } from "../../../services/categoryApi";
 import Swal from "sweetalert2";
@@ -47,7 +50,18 @@ const colorOptions = [
 ];
 
 export const CategoriesPage = () => {
-  const { notes, user, categories, tags } = useOutletContext();
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+
+  const { totalCategories } = useOutletContext();
+
+  const {
+    data: categoriesData,
+    isLoading: isCategoriesLoading,
+    isError: isCategoryError,
+  } = useGetCategoriesQuery({ page: page, limit: limit });
+
+  const totalPages = Math.ceil(totalCategories / limit);
 
   const [addCategory, { isLoading: isLoadingCreateCategory }] =
     useAddCategoryMutation();
@@ -149,6 +163,10 @@ export const CategoriesPage = () => {
       setIsEditModalOpen(false);
     }
   };
+
+  if (isCategoriesLoading || !categoriesData.data) {
+    return <div>Cargando notas...</div>;
+  }
   return (
     <Box>
       <Box
@@ -179,8 +197,8 @@ export const CategoriesPage = () => {
       <Box sx={{ mb: 3, display: "flex", gap: 2 }}></Box>
 
       <Grid container spacing={3}>
-        {categories.length > 0 ? (
-          categories.map((category) => (
+        {categoriesData.data.length > 0 ? (
+          categoriesData.data.map((category) => (
             <Grid item xs={12} sm={6} md={4} key={category.id}>
               <Card
                 sx={{
@@ -308,6 +326,14 @@ export const CategoriesPage = () => {
           </Box>
         </Modal>
       )}
+
+      <Stack spacing={2} mt={5} alignItems="center">
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={(_, value) => setPage(value)}
+        />
+      </Stack>
     </Box>
   );
 };
