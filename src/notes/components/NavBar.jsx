@@ -7,6 +7,8 @@ import {
   Tooltip,
   useTheme,
   useMediaQuery,
+  Box,
+  Stack,
 } from "@mui/material";
 import { LogoutOutlined } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,10 +29,10 @@ export const NavBar = ({ drawerWidth = 240 }) => {
     dispatch(toggleDarkMode());
   };
 
-  const handleLogout = () => {
-    dispatch(logoutReducer());
-    navigate("/auth", { replace: true }); // Redirige al login
-  };
+  // const handleLogout = () => {
+  //   dispatch(logoutReducer());
+  //   navigate("/auth", { replace: true }); // Redirige al login
+  // };
 
   return (
     <AppBar
@@ -54,19 +56,28 @@ export const NavBar = ({ drawerWidth = 240 }) => {
           wrap="nowrap"
           spacing={2}
         >
-          <Grid item>
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{
-                fontWeight: "bold",
-                color: darkMode ? theme.palette.text.primary : "#fff",
-                userSelect: "none",
-              }}
-            >
-              ZenNotes
-            </Typography>
+          <Grid item xs>
+            <Box sx={{ textAlign: isLargeScreen ? "left" : "center" }}>
+              <Typography
+                variant="h6"
+                noWrap
+                component="div"
+                sx={{
+                  fontWeight: "bold",
+                  color: darkMode ? theme.palette.text.primary : "#fff",
+                  userSelect: "none",
+                }}
+              >
+                <Stack>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    ZenNotes
+                  </Typography>
+                  <Typography variant="body2">
+                    Your personal note manager
+                  </Typography>
+                </Stack>
+              </Typography>
+            </Box>
           </Grid>
 
           <Grid
@@ -83,7 +94,7 @@ export const NavBar = ({ drawerWidth = 240 }) => {
               </Tooltip>
             </Grid>
 
-            <Grid item>
+            {/* <Grid item>
               <Tooltip title="Logout">
                 <IconButton
                   onClick={handleLogout}
@@ -94,7 +105,7 @@ export const NavBar = ({ drawerWidth = 240 }) => {
                   <LogoutOutlined fontSize="medium" />
                 </IconButton>
               </Tooltip>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Grid>
       </Toolbar>

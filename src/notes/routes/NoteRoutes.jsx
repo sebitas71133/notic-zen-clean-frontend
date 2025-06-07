@@ -6,6 +6,7 @@ import { NotePageWrapper } from "../pages/NotePageWrapper";
 
 import { NotesPage } from "../pages/NotesPage";
 import { TagsPage } from "../pages/TagsPage";
+import { ToolsPage } from "../pages/ToolsPage";
 
 const noteRoutes = {
   path: "/app",
@@ -26,6 +27,10 @@ const noteRoutes = {
     {
       path: "tags",
       element: <TagsPage />,
+    },
+    {
+      path: "tools",
+      element: <ToolsPage />,
     },
 
     {

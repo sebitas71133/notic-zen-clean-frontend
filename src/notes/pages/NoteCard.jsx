@@ -103,9 +103,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
     if (!file) return;
 
     if (file.size > 10 * 1024 * 1024) {
-      toast.error(
-        "El archivo supera los 10MB. Por favor, selecciona uno más ligero."
-      );
+      toast.error("The file exceeds 10MB, Please coohse a smaller one.");
       return;
     }
 
@@ -144,7 +142,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
       }
 
       Swal.fire({
-        title: `${data.title} guardada!`,
+        title: `${data.title} saved!`,
         icon: "success",
         width: 600,
         padding: "3em",
@@ -173,24 +171,24 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
     console.log({ activeNoteId: activeNote.id });
 
     const result = await Swal.fire({
-      title: `¿Eliminar nota "${activeNote.title}"?`,
-      text: "Esta acción no se puede deshacer",
+      title: `Delete note "${activeNote.title}"?`,
+      text: "This acction cannot be undone",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
+      confirmButtonText: "Yes, delete it",
+      cancelButtonText: "Cancel",
     });
 
     if (result.isConfirmed) {
       try {
         await deleteNote(activeNote.id).unwrap();
-        Swal.fire("Nota eliminada", "", "success");
+        Swal.fire("Note deleted", "", "success");
         navigate("/app");
       } catch (err) {
         console.error("Error al eliminar nota:", err);
-        Swal.fire("Oops", err.data?.error || "Ocurrió un error", "error");
+        Swal.fire("Oops", err.data?.error || "An error ocurred", "error");
       }
     }
   };
@@ -273,14 +271,28 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
   }, []);
 
   return (
-    <Box sx={{ p: 3 }} component="form" onSubmit={handleSubmit(onSubmit)}>
+    <Box
+      sx={{ p: { xs: 0, sm: 4 }, m: { xs: 0, sm: 4 } }}
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <IconButton onClick={onBack}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h5">
-            {isNewNote ? "Nueva Nota" : "Editar Nota"}
+          <Typography
+            sx={{
+              fontSize: {
+                xs: "1rem",
+                sm: "1.3rem",
+                // md: "2rem",
+                // lg: "2rem",
+              },
+              fontWeight: 600,
+            }}
+          >
+            {isNewNote ? "NEW NOTE" : "EDIT NOTE"}
           </Typography>
         </Box>
         <Box>
@@ -321,9 +333,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
             sx={{ ml: 1 }}
             disabled={isLoadingCreateNote || isLoadingSaveNote}
           >
-            {isLoadingCreateNote || isLoadingSaveNote
-              ? "Guardando..."
-              : "Guardar"}
+            {isLoadingCreateNote || isLoadingSaveNote ? "Saving..." : "Save"}
           </Button>
         </Box>
       </Box>
@@ -337,28 +347,30 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <TextField
-                label="Título"
+                label="Title"
                 fullWidth
                 {...register("title", {
-                  required: "El título es requerido",
+                  required: "Title is required",
                   maxLength: {
                     value: 100,
-                    message: `El contenido no debe superar los ${100} caracteres`,
+                    message: `Title must not exceed ${100} characters`,
                   },
                 })}
                 error={!!errors.title}
                 helperText={errors.title?.message}
               />
             </Grid>
+
+            {/* CATEGORY */}
             <Grid item xs={12} md={6}>
               <Controller
                 name="categoryId"
                 control={control}
-                rules={{ required: "La categoría es obligatoria" }}
+                rules={{ required: "Category is required" }}
                 render={({ field, fieldState }) => (
                   <FormControl fullWidth error={!!fieldState.error}>
-                    <InputLabel>Categoría</InputLabel>
-                    <Select {...field} label="Categoría">
+                    <InputLabel>Category</InputLabel>
+                    <Select {...field} label="Category">
                       {categories.map((cat) => (
                         <MenuItem key={cat.id} value={cat.id}>
                           <Box display="flex" alignItems="center" gap={1}>
@@ -383,7 +395,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
             {/* Contenido */}
             <Grid item xs={12}>
               <TextField
-                label="Contenido"
+                label="Content"
                 fullWidth
                 multiline
                 minRows={6}
@@ -391,7 +403,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
                 {...register("content", {
                   maxLength: {
                     value: MAX_LENGTH,
-                    message: `El contenido no debe superar los ${MAX_LENGTH} caracteres`,
+                    message: `Content must not exceed ${MAX_LENGTH} characters`,
                   },
                 })}
                 error={!!errors.content}
@@ -439,8 +451,8 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        label="Etiquetas"
-                        placeholder="Agregar etiquetas"
+                        label="Tags"
+                        placeholder="Add Tags"
                       />
                     )}
                   />
@@ -457,8 +469,20 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
                   sx={{ mb: 2 }}
                 >
                   <ImageOutlinedIcon color="action" />
-                  <Typography variant="h5" component="h2">
-                    Imágenes de la Nota
+                  <Typography
+                    variant="h6"
+                    component="h2"
+                    sx={{
+                      fontSize: {
+                        xs: "1rem",
+                        sm: "1.3rem",
+                        // md: "2rem",
+                        // lg: "2rem",
+                      },
+                      fontWeight: 600,
+                    }}
+                  >
+                    IMAGES
                   </Typography>
                 </Stack>
                 <Gallery
@@ -468,39 +492,41 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
                   watchedImages={watch("images")}
                   setValue={setValue}
                 />
+                {/* SUBIR DESDE PC */}
+                <Box>
+                  <input
+                    accept="image/*"
+                    type="file"
+                    hidden
+                    multiple
+                    id="upload-image"
+                    onChange={handleFileImageUpload}
+                  />
+                  <label htmlFor="upload-image">
+                    <Button
+                      component="span"
+                      startIcon={<ImageIcon />}
+                      sx={{ mt: 1 }}
+                    >
+                      Upload image from PC
+                    </Button>
+                  </label>
+                </Box>
                 <Button
                   startIcon={<ImageIcon />}
                   onClick={() => setOpenImageDialog(true)}
                   sx={{ mt: 1 }}
                 >
-                  Agregar imagen
+                  Add image
                 </Button>
               </Box>
-              {/* SUBIR DESDE PC */}
-              <input
-                accept="image/*"
-                type="file"
-                hidden
-                multiple
-                id="upload-image"
-                onChange={handleFileImageUpload}
-              />
-              <label htmlFor="upload-image">
-                <Button
-                  component="span"
-                  startIcon={<ImageIcon />}
-                  sx={{ mt: 1 }}
-                >
-                  Subir imagen desde PC
-                </Button>
-              </label>
             </Grid>
           </Grid>
         </Box>
       </Paper>
 
       <Dialog open={openImageDialog} onClose={() => setOpenImageDialog(false)}>
-        <DialogTitle>Agregar Imagen</DialogTitle>
+        <DialogTitle>Add Image</DialogTitle>
         <DialogContent>
           {newImageUrl?.startsWith("data:image") ? (
             <img
@@ -514,7 +540,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
             />
           ) : (
             <TextField
-              label="URL de la imagen"
+              label="image url"
               fullWidth
               value={newImageUrl}
               onChange={(e) => setNewImageUrl(e.target.value)}
@@ -522,16 +548,16 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
             />
           )}
           <TextField
-            label="Texto alternativo"
+            label="alternative text"
             fullWidth
             value={newImageAlt}
             onChange={(e) => setNewImageAlt(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenImageDialog(false)}>Cancelar</Button>
+          <Button onClick={() => setOpenImageDialog(false)}>Cancel</Button>
           <Button onClick={handleAddImage} variant="contained">
-            Agregar
+            Add
           </Button>
         </DialogActions>
       </Dialog>

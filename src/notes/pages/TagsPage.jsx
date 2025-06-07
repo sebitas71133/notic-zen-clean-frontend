@@ -129,7 +129,18 @@ export const TagsPage = () => {
           mb: 3,
         }}
       >
-        <Typography variant="h4" component="h1">
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{
+            fontSize: {
+              xs: "1.3rem",
+              sm: "1.5rem",
+              md: "1.7rem",
+            },
+            fontWeight: 600,
+          }}
+        >
           {/* <LabelIcon
             fontSize="large"
             color="primary"
@@ -141,6 +152,13 @@ export const TagsPage = () => {
           variant="contained"
           startIcon={<NoteAddIcon />}
           onClick={() => handleEditTag({ name: "" })}
+          sx={{
+            fontSize: {
+              xs: "12px",
+              sm: "14px",
+              md: "16px",
+            },
+          }}
         >
           ADD TAG
         </Button>

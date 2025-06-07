@@ -9,6 +9,9 @@ export const notesSlice = createSlice({
   name: "note",
   initialState: {
     activeNote: JSON.parse(localStorage.getItem("activeNote")) || null,
+    allNotes: [],
+    filteredNotes: [],
+    searchTerm: "",
   },
   reducers: {
     setActiveNote: (state, action) => {
@@ -33,6 +36,21 @@ export const notesSlice = createSlice({
         state.activeNote.images.splice(indexToDelete, 1);
       }
     },
+
+    setNotes: (state, action) => {
+      state.allNotes = action.payload;
+      state.filteredNotes = [];
+      // console.log(state.allNotes);
+    },
+    setSearchTerm: (state, action) => {
+      state.searchTerm = action.payload;
+      state.filteredNotes = state.allNotes.filter((note) =>
+        note.title.toLowerCase().includes(action.payload.toLowerCase())
+      );
+    },
+    setFilteredNotes: (state, action) => {
+      state.filteredNotes = action.payload;
+    },
   },
 });
 
@@ -42,5 +60,8 @@ export const {
   toggleModal,
   deleteImageFromActiveNote,
   updatedImagesReducer,
+  setNotes,
+  setSearchTerm,
+  setFilteredNotes,
 } = notesSlice.actions;
 // export const notesReducer = notesSlice.reducer;

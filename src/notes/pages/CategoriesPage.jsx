@@ -178,7 +178,18 @@ export const CategoriesPage = () => {
           mb: 3,
         }}
       >
-        <Typography variant="h4" component="h1">
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{
+            fontSize: {
+              xs: "1.3rem",
+              sm: "1.5rem",
+              md: "1.7rem",
+            },
+            fontWeight: 600,
+          }}
+        >
           {/* <CategoryIcon
             fontSize="large"
             color="primary"
@@ -195,8 +206,15 @@ export const CategoriesPage = () => {
               color: "#000000",
             })
           }
+          sx={{
+            fontSize: {
+              xs: "12px",
+              sm: "14px",
+              md: "16px",
+            },
+          }}
         >
-          Nueva Categoria
+          ADD CATEGORY
         </Button>
       </Box>
 

@@ -10,10 +10,13 @@ import { useAuthStore } from "../../hooks/useAuthStore.js";
 import { useGetCategoriesQuery } from "../../../services/categoryApi.js";
 import { useGetTagsQuery } from "../../../services/tagApi.js";
 import { useGetNotesQuery } from "../../../services/noteApi.js";
+import { useDispatch } from "react-redux";
+import { setNotes } from "../../store/slices/noteSlice.js";
 
 const drawerWidth = 280;
 
 export const NoteLayout = () => {
+  const dispatch = useDispatch();
   const {
     data: categoriesData,
     isLoading: isCategoriesLoading,
@@ -34,25 +37,29 @@ export const NoteLayout = () => {
 
   const { user } = useAuthStore();
 
-  if (!categoriesData || isCategoriesLoading) {
+  if (!categoriesData?.data || isCategoriesLoading) {
     return <div>Cargando categorias...</div>;
   }
 
-  if (isTagsLoading || !tagsData) {
+  if (isTagsLoading || !tagsData?.data) {
     return <div>Cargando tags...</div>;
   }
 
-  if (isNotesLoading || !notesData) {
+  if (isNotesLoading || !notesData?.data) {
     return <div>Cargando notas...</div>;
   }
-
-  console.log({ notesData, isNotesError });
 
   const notesTotal = notesData.data?.length ?? 0;
   const categories = categoriesData.data;
   const totalCategories = categories.length ?? 0;
   const tags = tagsData.data; //Para NoteCard
   const totalTags = tags.length ?? 0;
+
+  const imagesTotal = notesData.data.reduce((total, note) => {
+    return total + (note.images?.length || 0);
+  }, 0);
+
+  dispatch(setNotes(notesData.data));
 
   return (
     <Box
@@ -76,6 +83,7 @@ export const NoteLayout = () => {
             tags,
             totalCategories,
             notesTotal,
+            imagesTotal,
           }}
         ></Outlet>
       </Box>
