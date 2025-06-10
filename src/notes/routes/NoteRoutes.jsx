@@ -5,6 +5,7 @@ import { DashboardPage } from "../pages/DashboardPage";
 import { NotePageWrapper } from "../pages/NotePageWrapper";
 
 import { NotesPage } from "../pages/NotesPage";
+import { SubNoteCard } from "../pages/SubNoteCard";
 import { TagsPage } from "../pages/TagsPage";
 import { ToolsPage } from "../pages/ToolsPage";
 
@@ -36,6 +37,10 @@ const noteRoutes = {
     {
       path: "note/:noteId",
       element: <NotePageWrapper />,
+    },
+    {
+      path: "note/:noteId/subnote/:subNoteId",
+      element: <SubNoteCard />,
     },
   ],
 };

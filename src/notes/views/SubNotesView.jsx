@@ -1,26 +1,34 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useGetSubNotesQuery } from "../../../services/subNoteApi";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setActiveSubNote,
+  setFilteredSubNotes,
+  setSearchSubTerm,
+  setSubNotes,
+} from "../../store/slices/noteSlice";
 import {
   Box,
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  CardActionArea,
   Button,
-  TextField,
-  InputAdornment,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  FormControl,
+  Grid,
   IconButton,
+  InputAdornment,
+  InputLabel,
   Menu,
   MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
-  Tooltip,
   Paper,
-  CardMedia,
+  Select,
   Stack,
-  Pagination,
+  TextField,
+  Tooltip,
+  Typography,
 } from "@mui/material";
+
 import {
   NoteAdd as NoteAddIcon,
   Search as SearchIcon,
@@ -29,22 +37,13 @@ import {
   Archive as ArchiveIcon,
   Clear as ClearIcon,
 } from "@mui/icons-material";
-import NotesIcon from "@mui/icons-material/Notes";
-import { useNavigate, useOutletContext } from "react-router-dom";
-import {
-  setActiveNote,
-  setFilteredNotes,
-  setNotes,
-  setSearchTerm,
-} from "../../store/slices/noteSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { useGetNotesQuery } from "../../../services/noteApi";
 import { useGetTagsQuery } from "../../../services/tagApi";
+import { Navigate, useNavigate } from "react-router-dom";
 
-export const NotesPage = () => {
-  const { categories, notesTotal } = useOutletContext();
+export const SubNotesView = ({ noteId }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  // const [searchTerm, setSearchTerm] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState("");
   const [tagFilter, setTagFilter] = useState("");
@@ -55,53 +54,59 @@ export const NotesPage = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const { filteredSubNotes, searchSubTerm } = useSelector(
+    (state) => state.note
+  );
 
-  const { filteredNotes, searchTerm } = useSelector((state) => state.note);
+  const { data: subNotesData = [], isLoading: isSubNotesLoading } =
+    useGetSubNotesQuery({
+      page: page,
+      limit: limit,
+      noteId: noteId,
 
-  const { data: notesData = [], isLoading: isNotesLoading } = useGetNotesQuery({
-    page: page,
-    limit: limit,
-    ...(categoryFilter && { categoryId: categoryFilter }),
-    ...(tagFilter && { tagId: tagFilter }),
-    ...(statusFilter && { statusFilter: statusFilter }),
-    ...(sortTitle && { sortTitle: sortTitle }),
-    ...(sortDate && { sortDate: sortDate }),
-  });
-
-  console.log({ notesTotal, limit });
-
-  const totalPages = Math.ceil(notesTotal / limit);
+      ...(tagFilter && { tagId: tagFilter }),
+      ...(statusFilter && { statusFilter: statusFilter }),
+      ...(sortTitle && { sortTitle: sortTitle }),
+      ...(sortDate && { sortDate: sortDate }),
+    });
 
   const { data: tagsData = [] } = useGetTagsQuery({ page: 1, limit: 50 });
 
-  const handleNewNote = () => {
-    navigate("/app/note/new");
+  const handleNewSubNote = () => {
+    navigate(`/app/note/${noteId}/subnote/new`);
   };
 
   useEffect(() => {
-    if (searchTerm === "") {
-      dispatch(setFilteredNotes([]));
+    if (searchSubTerm === "") {
+      dispatch(setFilteredSubNotes([]));
     }
-  }, [searchTerm, dispatch]);
+  }, [searchSubTerm, dispatch]);
+
+  useEffect(() => {
+    dispatch(setSubNotes(subNotesData.data));
+  }, [dispatch, subNotesData.data]);
 
   const handleClearFilters = () => {
-    setSearchTerm("");
+    setSearchSubTerm("");
     setCategoryFilter("");
     setTagFilter("");
     setStatusFilter("all");
   };
 
-  if (isNotesLoading || !notesData.data) {
-    return <div>Cargando notas...</div>;
+  if (isSubNotesLoading) {
+    return <div>Cargando sub notas...</div>;
   }
+  const subNotes = subNotesData.data;
 
-  const notes = notesData.data;
-  const displayedNotes = filteredNotes.length > 0 ? filteredNotes : notes || [];
+  const displayedSubNotes =
+    filteredSubNotes.length > 0 ? filteredSubNotes : subNotes || [];
+
+  console.log({ subNotes });
 
   return (
     <Box>
+      {/* TITULO Y BOTON DE AGRTE */}
+
       <Box
         sx={{
           display: "flex",
@@ -122,18 +127,13 @@ export const NotesPage = () => {
             fontWeight: 600,
           }}
         >
-          {/* <NotesIcon
-            fontSize="large"
-            color="primary"
-            sx={{ marginRight: 2 }}
-          ></NotesIcon> */}
-          📝 Notes
+          📝 Sub Notes
         </Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
           <Button
             variant="contained"
             startIcon={<NoteAddIcon />}
-            onClick={handleNewNote}
+            onClick={handleNewSubNote}
             sx={{
               fontSize: {
                 xs: "12px",
@@ -142,7 +142,7 @@ export const NotesPage = () => {
               },
             }}
           >
-            ADD NOTE
+            ADD SUBNOTE
           </Button>
         </Box>
       </Box>
@@ -152,21 +152,21 @@ export const NotesPage = () => {
       <Box sx={{ mb: 3, display: "flex", gap: 2 }}>
         <TextField
           fullWidth
-          placeholder="Searching for notes on current page..."
-          value={searchTerm}
-          onChange={(e) => dispatch(setSearchTerm(e.target.value))}
+          placeholder="Searching for subnotes on current page..."
+          value={searchSubTerm}
+          onChange={(e) => dispatch(setSearchSubTerm(e.target.value))}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
                 <SearchIcon />
               </InputAdornment>
             ),
-            endAdornment: searchTerm && (
+            endAdornment: searchSubTerm && (
               <InputAdornment position="end">
                 <IconButton
                   size="small"
                   onClick={() => {
-                    dispatch(setSearchTerm(""));
+                    dispatch(setSearchSubTerm(""));
                   }}
                 >
                   <ClearIcon />
@@ -194,21 +194,6 @@ export const NotesPage = () => {
             </Typography>
 
             <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-              <InputLabel>Category</InputLabel>
-              <Select
-                value={categoryFilter}
-                label="Category"
-                onChange={(e) => setCategoryFilter(e.target.value)}
-              >
-                <MenuItem value="">All</MenuItem>
-                {categories.map((category) => (
-                  <MenuItem key={category.id} value={category.id}>
-                    {category.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth size="small" sx={{ mb: 2 }}>
               <InputLabel>Tag</InputLabel>
               <Select
                 value={tagFilter}
@@ -232,7 +217,7 @@ export const NotesPage = () => {
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
                 <MenuItem value="all">All</MenuItem>
-                {/* <MenuItem value="active">Activas</MenuItem> */}
+                <MenuItem value="active">Activas</MenuItem>
                 <MenuItem value="pinned">Pinned</MenuItem>
                 <MenuItem value="archived">Archived</MenuItem>
               </Select>
@@ -278,7 +263,6 @@ export const NotesPage = () => {
                 <MenuItem value={50}>50</MenuItem>
               </Select>
             </FormControl>
-
             <Button
               variant="outlined"
               size="small"
@@ -291,10 +275,11 @@ export const NotesPage = () => {
         </Menu>
       </Box>
 
+      {/* SUBNOTES */}
       <Grid container spacing={3}>
-        {notes.length > 0 ? (
-          displayedNotes.map((note) => (
-            <Grid item xs={6} sm={3} md={3} key={note.id}>
+        {subNotes?.length > 0 ? (
+          displayedSubNotes.map((subNote) => (
+            <Grid item xs={6} sm={3} md={3} key={subNote.id}>
               <Card
                 sx={{
                   borderRadius: 3,
@@ -303,7 +288,7 @@ export const NotesPage = () => {
                   flexDirection: "column",
                   boxShadow: 3,
                   transition: "transform 0.2s ease, box-shadow 0.3s ease",
-                  borderLeft: `6px solid ${note.category?.color || "#90caf9"}`, // Color de borde por categoría
+
                   backgroundColor: (theme) => theme.palette.background.paper,
                   "&:hover": {
                     transform: "translateY(-4px)",
@@ -314,16 +299,16 @@ export const NotesPage = () => {
                 <CardActionArea
                   sx={{ height: "100%" }}
                   onClick={() => {
-                    dispatch(setActiveNote(note));
-                    navigate(`/app/note/${note.id}`);
+                    dispatch(setActiveSubNote(subNote));
+                    navigate(`/app/note/${noteId}/subnote/${subNote.id}`);
                   }}
                 >
-                  {note.images?.length > 0 && (
+                  {subNote.images?.length > 0 && (
                     <CardMedia
                       component="img"
                       height="120"
-                      image={note.images[0].url}
-                      alt={note.title || "Imagen de la nota"}
+                      image={subNote.images[0].url}
+                      alt={subNote.title || "Imagen de la nota"}
                       sx={{
                         objectFit: "cover",
                         borderTopLeftRadius: 12,
@@ -359,11 +344,11 @@ export const NotesPage = () => {
                           mb: 1,
                         }}
                       >
-                        {note.title || "Sin título"}
+                        {subNote.title || "Sin título"}
                       </Typography>
 
                       <Box sx={{ display: "flex", gap: 0.5, opacity: 0.6 }}>
-                        {note.isPinned && (
+                        {subNote.isPinned && (
                           <Tooltip title="Fijada">
                             <PushPinIcon
                               color="primary.main"
@@ -371,7 +356,7 @@ export const NotesPage = () => {
                             />
                           </Tooltip>
                         )}
-                        {note.isArchived && (
+                        {subNote.isArchived && (
                           <Tooltip title="Archivada">
                             <ArchiveIcon color="action" fontSize="small" />
                           </Tooltip>
@@ -395,10 +380,10 @@ export const NotesPage = () => {
                         mb: 1,
                       }}
                     >
-                      {note.content || "Sin contenido"}
+                      {subNote.description || "Sin contenido"}
                     </Typography>
 
-                    {note.category && (
+                    {/* {subNote.category && (
                       <Box
                         sx={{ display: "flex", alignItems: "center", mb: 1 }}
                       >
@@ -407,7 +392,7 @@ export const NotesPage = () => {
                             width: 10,
                             height: 10,
                             borderRadius: "50%",
-                            backgroundColor: note.category.color,
+                            backgroundColor: subNote.category.color,
                             mr: 1,
                           }}
                         />
@@ -421,9 +406,9 @@ export const NotesPage = () => {
                           {note.category.name}
                         </Typography>
                       </Box>
-                    )}
+                    )} */}
 
-                    {note.tags?.length > 0 && (
+                    {subNote.tags?.length > 0 && (
                       <Box
                         sx={{
                           display: "flex",
@@ -432,7 +417,7 @@ export const NotesPage = () => {
                           mb: 1,
                         }}
                       >
-                        {note.tags.slice(0, 3).map((tag) => (
+                        {subNote.tags.slice(0, 3).map((tag) => (
                           <Typography
                             key={tag.id}
                             variant="caption"
@@ -452,7 +437,7 @@ export const NotesPage = () => {
                     )}
 
                     <Typography variant="caption" color="text.secondary">
-                      {new Date(note.updatedAt).toLocaleDateString("es-PE", {
+                      {new Date(subNote.updatedAt).toLocaleDateString("es-PE", {
                         year: "numeric",
                         month: "2-digit",
                         day: "2-digit",
@@ -483,23 +468,23 @@ export const NotesPage = () => {
               <Button
                 variant="contained"
                 startIcon={<NoteAddIcon />}
-                onClick={handleNewNote}
+                onClick={handleNewSubNote}
                 sx={{ mt: 2 }}
               >
-                Crear Nota
+                Add subNote
               </Button>
             </Paper>
           </Grid>
         )}
       </Grid>
 
-      <Stack spacing={2} mt={5} alignItems="center">
+      {/* <Stack spacing={2} mt={5} alignItems="center">
         <Pagination
           count={totalPages}
           page={page}
           onChange={(_, value) => setPage(value)}
         />
-      </Stack>
+      </Stack> */}
     </Box>
   );
 };

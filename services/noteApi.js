@@ -78,7 +78,7 @@ export const notesApi = apiSlice.injectEndpoints({
         url: "/note/admin/images/cleanup",
         method: "POST",
       }),
-      invalidatesTags: ["Images"],
+      invalidatesTags: ["Images", "SubImages"],
     }),
   }),
 });

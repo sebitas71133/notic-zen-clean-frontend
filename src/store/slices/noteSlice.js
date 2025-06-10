@@ -12,6 +12,10 @@ export const notesSlice = createSlice({
     allNotes: [],
     filteredNotes: [],
     searchTerm: "",
+    allSubnotes: [],
+    filteredSubNotes: [],
+    searchSubTerm: "",
+    activeSubNote: JSON.parse(localStorage.getItem("activeSubNote")) || null,
   },
   reducers: {
     setActiveNote: (state, action) => {
@@ -51,6 +55,29 @@ export const notesSlice = createSlice({
     setFilteredNotes: (state, action) => {
       state.filteredNotes = action.payload;
     },
+
+    // SUBNOTES
+
+    setSubNotes: (state, action) => {
+      state.allSubnotes = action.payload;
+      state.filteredSubNotes = [];
+      // console.log(state.allNotes);
+    },
+    setSearchSubTerm: (state, action) => {
+      state.searchSubTerm = action.payload;
+      state.filteredSubNotes = state.allSubnotes.filter((subNote) =>
+        subNote.title.toLowerCase().includes(action.payload.toLowerCase())
+      );
+    },
+    setFilteredSubNotes: (state, action) => {
+      state.filteredSubNotes = action.payload;
+    },
+
+    setActiveSubNote: (state, action) => {
+      state.activeSubNote = action.payload;
+      console.log(state.activeSubNote);
+      localStorage.setItem("activeSubNote", JSON.stringify(action.payload));
+    },
   },
 });
 
@@ -63,5 +90,11 @@ export const {
   setNotes,
   setSearchTerm,
   setFilteredNotes,
+
+  // Subnotes
+  setFilteredSubNotes,
+  setSearchSubTerm,
+  setSubNotes,
+  setActiveSubNote,
 } = notesSlice.actions;
 // export const notesReducer = notesSlice.reducer;

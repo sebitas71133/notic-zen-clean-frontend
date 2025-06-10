@@ -17,52 +17,86 @@ import PestControlOutlinedIcon from "@mui/icons-material/PestControlOutlined";
 
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { LogoutOutlined } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import { logoutReducer } from "../../store/slices/authSlice";
 
 export const SideBarAdmin = ({ drawerWidth = 240, displayName }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isLargeScreen = useMediaQuery("(min-width: 1024px)");
   // Detecta si es PC/tablet
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  const handleLogout = () => {
+    dispatch(logoutReducer());
+    navigate("/auth", { replace: true });
+  };
+
   const drawerContent = (
-    <>
-      <Toolbar>
-        <Typography variant="h6" noWrap ml={6}>
-          {displayName ? displayName : "Admin"}
-        </Typography>
-      </Toolbar>
-      <Divider />
-      <List>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/admin">
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100vh",
+        justifyContent: "space-between", // Separa la parte superior de la inferior
+      }}
+    >
+      {/* PARTE SUPERIOR */}
+      <Box>
+        <Toolbar>
+          <Typography variant="h6" noWrap ml={6}>
+            {displayName ? displayName : "Admin"}
+          </Typography>
+        </Toolbar>
+        <Divider />
+        <List>
+          <ListItem disablePadding>
+            <ListItemButton component={Link} to="/admin">
+              <ListItemIcon>
+                <PestControlOutlinedIcon sx={{ color: "primary.main" }} />
+              </ListItemIcon>
+              <ListItemText primary="Users" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton component={Link} to="/admin/dashboard">
+              <ListItemIcon>
+                <PestControlOutlinedIcon sx={{ color: "primary.main" }} />
+              </ListItemIcon>
+              <ListItemText primary="dashboard" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton component={Link} to="/admin/cloudinary">
+              <ListItemIcon>
+                <PestControlOutlinedIcon sx={{ color: "primary.main" }} />
+              </ListItemIcon>
+              <ListItemText primary="cloudinary" />
+            </ListItemButton>
+          </ListItem>
+        </List>
+      </Box>
+
+      {/* PARTE INFERIOR */}
+      <Box>
+        <Divider />
+        <List>
+          <ListItemButton onClick={handleLogout}>
             <ListItemIcon>
-              <PestControlOutlinedIcon sx={{ color: "primary.main" }} />
+              <LogoutOutlined sx={{ color: "text.primary" }} />
             </ListItemIcon>
-            <ListItemText primary="Users" />
+            <ListItemText primary="Logout" />
           </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/admin/dashboard">
-            <ListItemIcon>
-              <PestControlOutlinedIcon sx={{ color: "primary.main" }} />
-            </ListItemIcon>
-            <ListItemText primary="dashboard" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/admin/cloudinary">
-            <ListItemIcon>
-              <PestControlOutlinedIcon sx={{ color: "primary.main" }} />
-            </ListItemIcon>
-            <ListItemText primary="cloudinary" />
-          </ListItemButton>
-        </ListItem>
-      </List>
-    </>
+        </List>
+      </Box>
+    </Box>
   );
 
   return (

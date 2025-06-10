@@ -1,4 +1,7 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+
 import {
   Box,
   Typography,
@@ -21,6 +24,7 @@ import {
   FormHelperText,
   CircularProgress,
   Autocomplete,
+  Stack,
 } from "@mui/material";
 import {
   Save as SaveIcon,
@@ -33,21 +37,18 @@ import {
   Image as ImageIcon,
   Close as CloseIcon,
 } from "@mui/icons-material";
-import Swal from "sweetalert2";
-import { useForm, Controller } from "react-hook-form";
-import { useSelector } from "react-redux";
-import { useNavigate, useOutletContext } from "react-router-dom";
-import {
-  useAddNoteMutation,
-  useDeleteNoteMutation,
-  useUpdateNoteMutation,
-} from "../../../services/noteApi";
-import { Gallery } from "../components/Gallery";
-
-import { Stack } from "@mui/material";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+import Swal from "sweetalert2";
+
+import { setActiveSubNote } from "../../store/slices/noteSlice";
+import { useForm, Controller } from "react-hook-form";
+import {
+  useAddSubNoteMutation,
+  useDeleteSubNoteMutation,
+  useUpdateSubNoteMutation,
+} from "../../../services/subNoteApi";
 import { toast } from "react-toastify";
-import { SubNotesView } from "../views/SubNotesView";
+import { Gallery } from "../components/Gallery";
 
 const MAX_LENGTH = 1000;
 
@@ -59,16 +60,32 @@ const toBoolean = (value) => {
   }
 };
 
-export const NoteCard = ({ noteId = "new", onBack }) => {
-  const { categories, tags, userId } = useOutletContext();
-  const [addNote, { isLoading: isLoadingCreateNote }] = useAddNoteMutation();
-  const [saveNote, { isLoading: isLoadingSaveNote }] = useUpdateNoteMutation();
-  const isNewNote = noteId === "new";
+export const SubNoteCard = () => {
   const navigate = useNavigate();
-  const { activeNote } = useSelector((state) => state.note);
+  const dispatch = useDispatch();
 
-  console.log({ categories });
-  console.log({ activeNoteCard: activeNote });
+  const { noteId, subNoteId } = useParams();
+  const { tags } = useOutletContext();
+
+  const handleBack = () => {
+    dispatch(setActiveSubNote(null));
+    navigate(`/app/note/${noteId}`); // Volver a la lista de notas
+  };
+
+  console.log({ noteId, subNoteId });
+
+  const [addSubNote, { isLoading: isLoadingCreateNote }] =
+    useAddSubNoteMutation();
+  const [saveSubNote, { isLoading: isLoadingSaveNote }] =
+    useUpdateSubNoteMutation();
+
+  const isNewSubNote = subNoteId === "new";
+  const { activeSubNote } = useSelector((state) => state.note);
+
+  console.log({ activeSubNote });
+
+  //   USE FORM
+
   const {
     register,
     handleSubmit,
@@ -79,8 +96,8 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
   } = useForm({
     defaultValues: {
       title: "",
-      content: "",
-      categoryId: "",
+      description: "",
+
       tags: [],
       images: [],
       isPinned: false,
@@ -88,16 +105,13 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
     },
   });
 
-  const [deleteNote] = useDeleteNoteMutation();
+  const [deleteSubNote] = useDeleteSubNoteMutation();
 
-  // const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openImageDialog, setOpenImageDialog] = useState(false);
   const [newImageUrl, setNewImageUrl] = useState("");
   const [newImageAlt, setNewImageAlt] = useState("");
 
   const watchedImages = watch("images");
-
-  //IMAGENES DESDE PC :
 
   const handleFileImageUpload = (event) => {
     const file = event.target.files?.[0];
@@ -131,15 +145,18 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
         isArchived: toBoolean(data.isArchived),
       };
 
-      console.log({ payload });
-
       let response;
-      if (isNewNote) {
-        response = await addNote(payload).unwrap();
+      if (isNewSubNote) {
+        response = await addSubNote({ noteId, subNote: payload }).unwrap();
         console.log("✅ Nota creada:", response);
       } else {
-        response = await saveNote({ id: noteId, ...payload }).unwrap();
-        console.log("✅ Nota actualizada:", response);
+        console.log({ payload });
+        response = await saveSubNote({
+          noteId,
+          subNoteId,
+          subNote: payload,
+        }).unwrap();
+        console.log("✅ SubNote actualizada:", response);
       }
 
       Swal.fire({
@@ -149,17 +166,17 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
         padding: "3em",
         color: "#716add",
         backdrop: `
-          rgba(0,0,123,0.4)
-          url("/images/nyan-cat.gif")
-          right top
-          no-repeat
-        `,
+                  rgba(0,0,123,0.4)
+                  url("/images/nyan-cat.gif")
+                  right top
+                  no-repeat
+                `,
       });
 
-      navigate("/app");
+      navigate(`/app/note/${noteId}`);
     } catch (err) {
       console.log(err);
-      setValue("images", activeNote?.images || []);
+      setValue("images", activeSubNote?.images || []);
 
       console.error("❌ Error al guardar nota:", err);
       Swal.fire("Oops", `${err.data.error}`);
@@ -167,12 +184,12 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
   };
 
   const handleDeleteNote = async () => {
-    if (!activeNote) return;
+    if (!activeSubNote) return;
 
-    console.log({ activeNoteId: activeNote.id });
+    console.log({ activeSubNoteId: activeSubNote.id });
 
     const result = await Swal.fire({
-      title: `Delete note "${activeNote.title}"?`,
+      title: `Delete subnote "${activeSubNote.title}"?`,
       text: "This acction cannot be undone",
       icon: "warning",
       showCancelButton: true,
@@ -184,11 +201,14 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
 
     if (result.isConfirmed) {
       try {
-        await deleteNote(activeNote.id).unwrap();
-        Swal.fire("Note deleted", "", "success");
-        navigate("/app");
+        await deleteSubNote({
+          subNoteId: activeSubNote.id,
+          noteId: activeSubNote.noteId,
+        }).unwrap();
+        Swal.fire("SubNote deleted", "", "success");
+        navigate(`/app/note/${noteId}`);
       } catch (err) {
-        console.error("Error al eliminar nota:", err);
+        console.error("Error al eliminar subnota:", err);
         Swal.fire("Oops", err.data?.error || "An error ocurred", "error");
       }
     }
@@ -236,21 +256,19 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
   };
 
   useEffect(() => {
-    if (activeNote && !isNewNote) {
-      setValue("title", activeNote.title || "");
-      setValue("content", activeNote.content || "");
-      setValue("categoryId", activeNote.categoryId || "");
-      setValue("tags", activeNote.tags?.map((t) => t.id) || []);
-      setValue("images", activeNote.images || []);
-      setValue("isPinned", activeNote.isPinned || false);
-      setValue("isArchived", activeNote.isArchived || false);
+    if (activeSubNote && !isNewSubNote) {
+      setValue("title", activeSubNote.title || "");
+      setValue("description", activeSubNote.description || "");
+
+      setValue("tags", activeSubNote.tags?.map((t) => t.id) || []);
+      setValue("images", activeSubNote.images || []);
+      setValue("isPinned", activeSubNote.isPinned || false);
+      setValue("isArchived", activeSubNote.isArchived || false);
     }
-  }, [activeNote, isNewNote, setValue]);
+  }, [activeSubNote, isNewSubNote, setValue]);
 
   const isPinned = watch("isPinned");
   const isArchived = watch("isArchived");
-
-  console.log(isArchived);
 
   useEffect(() => {
     const handlePaste = (event) => {
@@ -290,7 +308,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
     >
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <IconButton onClick={onBack}>
+          <IconButton onClick={handleBack}>
             <ArrowBackIcon />
           </IconButton>
           <Typography
@@ -304,11 +322,11 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
               fontWeight: 600,
             }}
           >
-            {isNewNote ? "NEW NOTE" : "EDIT NOTE"}
+            {isNewSubNote ? "NEW SUBNOTE" : "EDIT SUBNOTE"}
           </Typography>
         </Box>
         <Box>
-          {!isNewNote && (
+          {!isNewSubNote && (
             <>
               <Tooltip title="Fijar">
                 <IconButton onClick={() => setValue("isPinned", !isPinned)}>
@@ -349,6 +367,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
           </Button>
         </Box>
       </Box>
+
       <Paper sx={{ p: 3 }}>
         <Box
           disabled={isLoadingCreateNote || isLoadingSaveNote}
@@ -372,64 +391,33 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
               />
             </Grid>
 
-            {/* CATEGORY */}
-            <Grid item xs={12} md={6}>
-              <Controller
-                name="categoryId"
-                control={control}
-                rules={{ required: "Category is required" }}
-                render={({ field, fieldState }) => (
-                  <FormControl fullWidth error={!!fieldState.error}>
-                    <InputLabel>Category</InputLabel>
-                    <Select {...field} label="Category">
-                      {categories.map((cat) => (
-                        <MenuItem key={cat.id} value={cat.id}>
-                          <Box display="flex" alignItems="center" gap={1}>
-                            <Box
-                              width={12}
-                              height={12}
-                              borderRadius="50%"
-                              bgcolor={cat.color}
-                              flexShrink={0}
-                            />
-                            {cat.name}
-                          </Box>
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    <FormHelperText>{fieldState.error?.message}</FormHelperText>
-                  </FormControl>
-                )}
-              />
-            </Grid>
-
             {/* Contenido */}
             <Grid item xs={12}>
               <TextField
-                label="Content"
+                label="description"
                 fullWidth
                 multiline
                 minRows={6}
                 // inputProps={{ maxLength: 10 }}
-                {...register("content", {
+                {...register("description", {
                   maxLength: {
                     value: MAX_LENGTH,
-                    message: `Content must not exceed ${MAX_LENGTH} characters`,
+                    message: `description must not exceed ${MAX_LENGTH} characters`,
                   },
                 })}
-                error={!!errors.content}
-                helperText={errors.content?.message}
+                error={!!errors.description}
+                helperText={errors.description?.message}
               />
               <Typography
                 variant="body2"
                 color={
-                  watch("content", "").length > MAX_LENGTH
+                  watch("description", "").length > MAX_LENGTH
                     ? "error"
                     : "textSecondary"
                 }
                 align="right"
               >
-                {watch("content", "").length}/{MAX_LENGTH}
+                {watch("description", "").length}/{MAX_LENGTH}
               </Typography>
             </Grid>
 
@@ -536,6 +524,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
           </Grid>
         </Box>
       </Paper>
+
       <Dialog open={openImageDialog} onClose={() => setOpenImageDialog(false)}>
         <DialogTitle>Add Image</DialogTitle>
         <DialogContent>
@@ -572,13 +561,6 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
           </Button>
         </DialogActions>
       </Dialog>
-      {/* SUBNOTES */}
-
-      {!isNewNote && (
-        <Box mt={4}>
-          <SubNotesView noteId={noteId}></SubNotesView>
-        </Box>
-      )}
     </Box>
   );
 };

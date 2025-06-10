@@ -21,12 +21,14 @@ import {
   deleteImageFromActiveNote,
   updatedImagesReducer,
 } from "../../store/slices/noteSlice";
+import { PushPin } from "@mui/icons-material";
 // import Swal from "sweetalert2";
 
 export const Gallery = ({
   images,
   onRemove,
   onEdit,
+  onPin,
   watchedImages,
   setValue,
 }) => {
@@ -39,42 +41,43 @@ export const Gallery = ({
   const [isEditing, setIsEditing] = useState(false);
   const theme = useTheme();
 
-  const handleDelete = () => {
-    onRemove(currentIndex);
-    // if (!activeNote?.images?.length) return;
-    dispatch(deleteImageFromActiveNote(currentIndex));
-  };
+  // const handleDelete = () => {
+  //   onRemove(currentIndex);
+  //   setShowGallery(false);
+  //   // if (!activeNote?.images?.length) return;
+  //   // dispatch(deleteImageFromActiveNote(currentIndex));
+  // };
 
-  const handleSave = () => {
-    const currentImage = activeNote?.images?.[currentIndex];
+  // const handleSaveEdit = () => {
+  //   const currentImage = activeNote?.images?.[currentIndex];
 
-    if (currentImage) {
-      // Editando una imagen existente de una nota activa
-      const updatedImages = [...activeNote.images];
-      updatedImages[currentIndex] = {
-        ...updatedImages[currentIndex],
-        altText: editAltText,
-      };
-      dispatch(updatedImagesReducer(updatedImages));
-    } else {
-      // Editando una imagen nueva aún no guardada
-      const updated = watchedImages.map((img, index) =>
-        index === currentIndex ? { ...img, altText: editAltText } : img
-      );
-      setValue("images", updated); // react-hook-form
-    }
+  //   if (currentImage) {
+  //     // Editando una imagen existente de una nota activa
+  //     const updatedImages = [...activeNote.images];
+  //     updatedImages[currentIndex] = {
+  //       ...updatedImages[currentIndex],
+  //       altText: editAltText,
+  //     };
+  //     dispatch(updatedImagesReducer(updatedImages));
+  //   } else {
+  //     // Editando una imagen nueva aún no guardada
+  //     const updated = watchedImages.map((img, index) =>
+  //       index === currentIndex ? { ...img, altText: editAltText } : img
+  //     );
+  //     setValue("images", updated); // react-hook-form
+  //   }
 
-    setIsEditing(false);
-  };
+  //   setIsEditing(false);
+  // };
 
-  const handleEdit = () => {
-    const currentImage = activeNote?.images?.[currentIndex];
+  // const handleEdit = () => {
+  //   const currentImage = activeNote?.images?.[currentIndex];
 
-    console.log({ currentImage });
+  //   console.log({ currentImage });
 
-    setEditAltText(currentImage?.altText || "");
-    setIsEditing(true);
-  };
+  //   setEditAltText(currentImage?.altText || "");
+  //   setIsEditing(true);
+  // };
 
   const imagesR =
     images?.map(({ url, altText }) => ({
@@ -163,7 +166,9 @@ export const Gallery = ({
           }}
         >
           <IconButton
-            onClick={handleEdit}
+            onClick={() => {
+              setIsEditing(true);
+            }}
             size="small"
             // disabled={!activeNote?.images?.[currentIndex]}
             sx={{
@@ -176,7 +181,10 @@ export const Gallery = ({
           </IconButton>
 
           <IconButton
-            onClick={handleDelete}
+            onClick={() => {
+              onRemove(currentIndex);
+              setShowGallery(false);
+            }}
             size="small"
             sx={{
               bgcolor: "rgba(0,0,0,0.5)",
@@ -185,6 +193,24 @@ export const Gallery = ({
             }}
           >
             <DeleteIcon fontSize="small" />
+          </IconButton>
+
+          <IconButton
+            onClick={() => {
+              onPin(currentIndex);
+              setShowGallery(false);
+            }}
+            size="small"
+            sx={{
+              bgcolor: "rgba(0,0,0,0.5)",
+              color: "white",
+              "&:hover": { bgcolor: theme.palette.error.main },
+            }}
+          >
+            <PushPin
+              fontSize="small"
+              // color={isPinned ? "primary" : "inherit"}
+            />
           </IconButton>
         </Box>
       )}
@@ -209,7 +235,13 @@ export const Gallery = ({
           />
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" onClick={() => handleSave()}>
+          <Button
+            variant="contained"
+            onClick={() => {
+              onEdit(currentIndex, editAltText);
+              setIsEditing(false);
+            }}
+          >
             Guardar
           </Button>
           <Button onClick={() => setIsEditing(false)}>Cancelar</Button>

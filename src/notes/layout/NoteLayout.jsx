@@ -12,6 +12,7 @@ import { useGetTagsQuery } from "../../../services/tagApi.js";
 import { useGetNotesQuery } from "../../../services/noteApi.js";
 import { useDispatch } from "react-redux";
 import { setNotes } from "../../store/slices/noteSlice.js";
+import { useEffect } from "react";
 
 const drawerWidth = 280;
 
@@ -37,6 +38,12 @@ export const NoteLayout = () => {
 
   const { user } = useAuthStore();
 
+  useEffect(() => {
+    if (notesData?.data) {
+      dispatch(setNotes(notesData.data));
+    }
+  }, [notesData, dispatch]);
+
   if (!categoriesData?.data || isCategoriesLoading) {
     return <div>Cargando categorias...</div>;
   }
@@ -59,8 +66,6 @@ export const NoteLayout = () => {
     return total + (note.images?.length || 0);
   }, 0);
 
-  dispatch(setNotes(notesData.data));
-
   return (
     <Box
       sx={{
@@ -70,14 +75,17 @@ export const NoteLayout = () => {
     >
       <NavBar drawerWidth={drawerWidth} />
 
-      <SideBar drawerWidth={drawerWidth} displayName={user.name} />
+      <SideBar
+        drawerWidth={drawerWidth}
+        displayName={user?.name || "Invitado"}
+      />
 
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
 
         <Outlet
           context={{
-            userId: user.id,
+            userId: user?.id ?? null,
             categories,
             totalTags,
             tags,
