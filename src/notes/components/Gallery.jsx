@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import ReactImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -17,67 +17,19 @@ import {
 } from "@mui/material";
 
 import { useState } from "react";
-import {
-  deleteImageFromActiveNote,
-  updatedImagesReducer,
-} from "../../store/slices/noteSlice";
+
 import { PushPin } from "@mui/icons-material";
 // import Swal from "sweetalert2";
 
-export const Gallery = ({
-  images,
-  onRemove,
-  onEdit,
-  onPin,
-  watchedImages,
-  setValue,
-}) => {
+export const Gallery = ({ images, onRemove, onEdit, onPin }) => {
   const dispatch = useDispatch();
-  const { activeNote } = useSelector((state) => state.note);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [editAltText, setEditAltText] = useState("");
   const [showGallery, setShowGallery] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const theme = useTheme();
-
-  // const handleDelete = () => {
-  //   onRemove(currentIndex);
-  //   setShowGallery(false);
-  //   // if (!activeNote?.images?.length) return;
-  //   // dispatch(deleteImageFromActiveNote(currentIndex));
-  // };
-
-  // const handleSaveEdit = () => {
-  //   const currentImage = activeNote?.images?.[currentIndex];
-
-  //   if (currentImage) {
-  //     // Editando una imagen existente de una nota activa
-  //     const updatedImages = [...activeNote.images];
-  //     updatedImages[currentIndex] = {
-  //       ...updatedImages[currentIndex],
-  //       altText: editAltText,
-  //     };
-  //     dispatch(updatedImagesReducer(updatedImages));
-  //   } else {
-  //     // Editando una imagen nueva aún no guardada
-  //     const updated = watchedImages.map((img, index) =>
-  //       index === currentIndex ? { ...img, altText: editAltText } : img
-  //     );
-  //     setValue("images", updated); // react-hook-form
-  //   }
-
-  //   setIsEditing(false);
-  // };
-
-  // const handleEdit = () => {
-  //   const currentImage = activeNote?.images?.[currentIndex];
-
-  //   console.log({ currentImage });
-
-  //   setEditAltText(currentImage?.altText || "");
-  //   setIsEditing(true);
-  // };
 
   const imagesR =
     images?.map(({ url, altText }) => ({

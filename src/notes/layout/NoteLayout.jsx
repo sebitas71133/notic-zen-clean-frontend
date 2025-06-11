@@ -59,7 +59,7 @@ export const NoteLayout = () => {
   const notesTotal = notesData.data?.length ?? 0;
   const categories = categoriesData.data;
   const totalCategories = categories.length ?? 0;
-  const tags = tagsData.data; //Para NoteCard
+  const tags = tagsData.data; //Para NoteCard / SubNoteCard
   const totalTags = tags.length ?? 0;
 
   const imagesTotal = notesData.data.reduce((total, note) => {

@@ -5,6 +5,8 @@ import CategoryIcon from "@mui/icons-material/Category";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import PersonIcon from "@mui/icons-material/Person";
 import ImageIcon from "@mui/icons-material/Image";
+import CollectionsIcon from "@mui/icons-material/Collections";
+import NoteAddIcon from "@mui/icons-material/NoteAdd";
 
 import { useGetTotalDocumentsQuery } from "../../../services/authApi";
 export const AdminDashboard = () => {
@@ -13,6 +15,8 @@ export const AdminDashboard = () => {
   if (isLoading || !data) {
     return <div>Cargando documents</div>;
   }
+
+  console.log(data.data);
 
   const stats = [
     {
@@ -40,6 +44,16 @@ export const AdminDashboard = () => {
       label: "Imagenes",
       value: data.data.totalImages,
       icon: <ImageIcon fontSize="large" color="info" />,
+    },
+    {
+      label: "SubNotes",
+      value: data.data.totalSubNotes,
+      icon: <NoteAddIcon fontSize="large" color="primary" />,
+    },
+    {
+      label: "SubImages",
+      value: data.data.totalSubImages,
+      icon: <CollectionsIcon fontSize="large" color="action" />,
     },
   ];
 

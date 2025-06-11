@@ -66,6 +66,13 @@ export const notesApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Notes"],
     }),
+    getStats: builder.query({
+      query: () => ({
+        url: `note/stats`,
+        method: "GET",
+      }),
+      providesTags: ["Stats"],
+    }),
     getAllImages: builder.query({
       query: () => ({
         url: `/note/admin/images/all`,
@@ -91,4 +98,5 @@ export const {
   useLazyGetNotesQuery,
   useGetAllImagesQuery,
   useCleanOrphanImagesMutation,
+  useGetStatsQuery,
 } = notesApi;

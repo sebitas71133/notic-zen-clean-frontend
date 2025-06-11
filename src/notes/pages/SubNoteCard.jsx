@@ -9,10 +9,6 @@ import {
   TextField,
   Button,
   IconButton,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Chip,
   Grid,
   Tooltip,
@@ -20,8 +16,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Checkbox,
-  FormHelperText,
   CircularProgress,
   Autocomplete,
   Stack,
@@ -38,6 +32,7 @@ import {
   Close as CloseIcon,
 } from "@mui/icons-material";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+import UndoIcon from "@mui/icons-material/Undo";
 import Swal from "sweetalert2";
 
 import { setActiveSubNote } from "../../store/slices/noteSlice";
@@ -67,6 +62,8 @@ export const SubNoteCard = () => {
   const { noteId, subNoteId } = useParams();
   const { tags } = useOutletContext();
 
+  console.log({ tags });
+
   const handleBack = () => {
     dispatch(setActiveSubNote(null));
     navigate(`/app/note/${noteId}`); // Volver a la lista de notas
@@ -82,8 +79,6 @@ export const SubNoteCard = () => {
   const isNewSubNote = subNoteId === "new";
   const { activeSubNote } = useSelector((state) => state.note);
 
-  console.log({ activeSubNote });
-
   //   USE FORM
 
   const {
@@ -91,8 +86,9 @@ export const SubNoteCard = () => {
     handleSubmit,
     setValue,
     control,
-    formState: { errors },
+    formState: { errors, isDirty },
     watch,
+    reset,
   } = useForm({
     defaultValues: {
       title: "",
@@ -136,6 +132,19 @@ export const SubNoteCard = () => {
   };
 
   const onSubmit = async (data) => {
+    const confirmResult = await Swal.fire({
+      title: "¿Guardar cambios?",
+      text: "¿Estás seguro de que quieres guardar esta subnota?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Sí, guardar",
+      cancelButtonText: "No, cancelar",
+    });
+
+    if (!confirmResult.isConfirmed) {
+      return;
+    }
+
     try {
       const payload = {
         ...data,
@@ -150,7 +159,6 @@ export const SubNoteCard = () => {
         response = await addSubNote({ noteId, subNote: payload }).unwrap();
         console.log("✅ Nota creada:", response);
       } else {
-        console.log({ payload });
         response = await saveSubNote({
           noteId,
           subNoteId,
@@ -226,7 +234,7 @@ export const SubNoteCard = () => {
         createdAt: undefined,
       },
     ];
-    setValue("images", updated);
+    setValue("images", updated, { shouldDirty: true });
     setNewImageUrl("");
     setNewImageAlt("");
     setOpenImageDialog(false);
@@ -234,14 +242,14 @@ export const SubNoteCard = () => {
 
   const handleRemoveImage = (indexToRemove) => {
     const updated = watchedImages.filter((_, index) => index !== indexToRemove);
-    setValue("images", updated);
+    setValue("images", updated, { shouldDirty: true });
   };
 
   const handleEditWatchedImage = (indexToUpdate, newAltText) => {
     const updated = watchedImages.map((img, index) =>
       index === indexToUpdate ? { ...img, altText: newAltText } : img
     );
-    setValue("images", updated);
+    setValue("images", updated, { shouldDirty: true });
   };
 
   const handleInsertImageAtStart = (indexToMove) => {
@@ -252,7 +260,7 @@ export const SubNoteCard = () => {
       (_, index) => index !== indexToMove
     );
     const updateImages = [newImage, ...filterImages];
-    setValue("images", updateImages);
+    setValue("images", updateImages, { shouldDirty: true });
   };
 
   useEffect(() => {
@@ -269,6 +277,11 @@ export const SubNoteCard = () => {
 
   const isPinned = watch("isPinned");
   const isArchived = watch("isArchived");
+
+  const activeSubNoteInitial = {
+    ...activeSubNote,
+    tags: activeSubNote?.tags?.map((t) => t.id) || [],
+  };
 
   useEffect(() => {
     const handlePaste = (event) => {
@@ -325,6 +338,7 @@ export const SubNoteCard = () => {
             {isNewSubNote ? "NEW SUBNOTE" : "EDIT SUBNOTE"}
           </Typography>
         </Box>
+
         <Box>
           {!isNewSubNote && (
             <>
@@ -350,6 +364,53 @@ export const SubNoteCard = () => {
               </Tooltip>
             </>
           )}
+          {/* BOTON PARA CANCELAR */}
+          <Button
+            variant="contained"
+            color="warning"
+            disabled={!isDirty}
+            startIcon={<UndoIcon />}
+            onClick={async () => {
+              const result = await Swal.fire({
+                title: "¿Cancelar edición?",
+                text: "Perderás los cambios no guardados de la subnota.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, cancelar",
+                cancelButtonText: "No, continuar editando",
+              });
+
+              if (result.isConfirmed) {
+                if (isNewSubNote) {
+                  // Si es una nota nueva y cancela, simplemente vuelve atrás
+                  navigate(-1);
+                } else {
+                  // Si está editando una existente, restablece los datos originales
+                  reset(activeSubNoteInitial); // Usa los datos originales de la subnota
+                  Swal.fire({
+                    title: "Restaurado",
+                    text: "Los cambios han sido descartados.",
+                    icon: "info",
+                    timer: 1500,
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                  });
+                }
+              }
+            }}
+            sx={{
+              mr: 1,
+
+              color: "#fff",
+              "&:hover": {
+                backgroundColor: "#f57c00",
+              },
+            }}
+          >
+            Cancelar
+          </Button>
+
+          {/* BOTON SAVE */}
           <Button
             type="submit"
             variant="contained"

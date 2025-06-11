@@ -33,6 +33,7 @@ import {
   Image as ImageIcon,
   Close as CloseIcon,
 } from "@mui/icons-material";
+import UndoIcon from "@mui/icons-material/Undo";
 import Swal from "sweetalert2";
 import { useForm, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
@@ -74,8 +75,9 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
     handleSubmit,
     setValue,
     control,
-    formState: { errors },
+    formState: { errors, isDirty },
     watch,
+    reset,
   } = useForm({
     defaultValues: {
       title: "",
@@ -122,6 +124,18 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
   };
 
   const onSubmit = async (data) => {
+    const confirmResult = await Swal.fire({
+      title: "¿Guardar cambios?",
+      text: "¿Estás seguro de que quieres guardar esta nota?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Sí, guardar",
+      cancelButtonText: "No, cancelar",
+    });
+
+    if (!confirmResult.isConfirmed) {
+      return;
+    }
     try {
       const payload = {
         ...data,
@@ -206,7 +220,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
         createdAt: undefined,
       },
     ];
-    setValue("images", updated);
+    setValue("images", updated, { shouldDirty: true });
     setNewImageUrl("");
     setNewImageAlt("");
     setOpenImageDialog(false);
@@ -214,14 +228,14 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
 
   const handleRemoveImage = (indexToRemove) => {
     const updated = watchedImages.filter((_, index) => index !== indexToRemove);
-    setValue("images", updated);
+    setValue("images", updated, { shouldDirty: true });
   };
 
   const handleEditWatchedImage = (indexToUpdate, newAltText) => {
     const updated = watchedImages.map((img, index) =>
       index === indexToUpdate ? { ...img, altText: newAltText } : img
     );
-    setValue("images", updated);
+    setValue("images", updated, { shouldDirty: true });
   };
 
   const handleInsertImageAtStart = (indexToMove) => {
@@ -232,7 +246,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
       (_, index) => index !== indexToMove
     );
     const updateImages = [newImage, ...filterImages];
-    setValue("images", updateImages);
+    setValue("images", updateImages, { shouldDirty: true });
   };
 
   useEffect(() => {
@@ -250,7 +264,10 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
   const isPinned = watch("isPinned");
   const isArchived = watch("isArchived");
 
-  console.log(isArchived);
+  const activeNoteInitial = {
+    ...activeNote,
+    tags: activeNote?.tags?.map((t) => t.id) || [],
+  };
 
   useEffect(() => {
     const handlePaste = (event) => {
@@ -332,6 +349,55 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
               </Tooltip>
             </>
           )}
+
+          {/* BOTON CANCELAR */}
+
+          <Button
+            variant="contained"
+            color="warning"
+            disabled={!isDirty}
+            startIcon={<UndoIcon />}
+            onClick={async () => {
+              const result = await Swal.fire({
+                title: "¿Cancelar edición?",
+                text: "Perderás los cambios no guardados de la nota.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, cancelar",
+                cancelButtonText: "No, continuar editando",
+              });
+
+              if (result.isConfirmed) {
+                if (isNewNote) {
+                  // Si es una nota nueva y cancela, simplemente vuelve atrás
+                  navigate(-1);
+                } else {
+                  // Si está editando una existente, restablece los datos originales
+                  reset(activeNoteInitial); // Usa los datos originales de la subnota
+                  Swal.fire({
+                    title: "Restaurado",
+                    text: "Los cambios han sido descartados.",
+                    icon: "info",
+                    timer: 1500, // en milisegundos
+                    showConfirmButton: false,
+                    timerProgressBar: true, // opcional, muestra una barra de progreso
+                  });
+                }
+              }
+            }}
+            sx={{
+              mr: 1,
+
+              color: "#fff",
+              "&:hover": {
+                backgroundColor: "#f57c00",
+              },
+            }}
+          >
+            Cancelar
+          </Button>
+
+          {/* BOTON SAVE */}
           <Button
             type="submit"
             variant="contained"
@@ -501,8 +567,6 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
                   onRemove={handleRemoveImage}
                   onEdit={handleEditWatchedImage}
                   onPin={handleInsertImageAtStart}
-                  watchedImages={watch("images")}
-                  setValue={setValue}
                 />
                 {/* SUBIR DESDE PC */}
                 <Box>
