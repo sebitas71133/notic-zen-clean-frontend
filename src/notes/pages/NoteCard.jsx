@@ -68,8 +68,6 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
   const navigate = useNavigate();
   const { activeNote } = useSelector((state) => state.note);
 
-  console.log({ categories });
-  console.log({ activeNoteCard: activeNote });
   const {
     register,
     handleSubmit,

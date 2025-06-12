@@ -293,7 +293,7 @@ export const NotesPage = () => {
       <Grid container spacing={3}>
         {notes.length > 0 ? (
           displayedNotes.map((note) => (
-            <Grid item xs={6} sm={3} md={3} key={note.id}>
+            <Grid item xs={6} sm={3} md={3} xl={2} key={note.id}>
               <Card
                 sx={{
                   borderRadius: 3,
