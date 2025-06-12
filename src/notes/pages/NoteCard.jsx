@@ -50,7 +50,7 @@ import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import { toast } from "react-toastify";
 import { SubNotesView } from "../views/SubNotesView";
 
-const MAX_LENGTH = 1000;
+const MAX_LENGTH = 5000;
 
 const toBoolean = (value) => {
   if (value) {

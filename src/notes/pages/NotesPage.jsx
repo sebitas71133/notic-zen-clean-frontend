@@ -70,7 +70,7 @@ export const NotesPage = () => {
     ...(sortDate && { sortDate: sortDate }),
   });
 
-  console.log({ notesTotal, limit });
+  console.log({ notesData });
 
   const totalPages = Math.ceil(notesTotal / limit);
 

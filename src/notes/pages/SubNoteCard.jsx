@@ -45,7 +45,7 @@ import {
 import { toast } from "react-toastify";
 import { Gallery } from "../components/Gallery";
 
-const MAX_LENGTH = 1000;
+const MAX_LENGTH = 5000;
 
 const toBoolean = (value) => {
   if (value) {
