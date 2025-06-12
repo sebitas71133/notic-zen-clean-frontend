@@ -21,6 +21,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { LogoutOutlined } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { logoutReducer } from "../../store/slices/authSlice";
+import { apiSlice } from "../../store/slices/apiSlice";
 
 export const SideBarAdmin = ({ drawerWidth = 240, displayName }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -36,6 +37,7 @@ export const SideBarAdmin = ({ drawerWidth = 240, displayName }) => {
 
   const handleLogout = () => {
     dispatch(logoutReducer());
+    dispatch(apiSlice.util.resetApiState()); // limpia caché de RTK Query (notas, tags, etc.)
     navigate("/auth", { replace: true });
   };
 

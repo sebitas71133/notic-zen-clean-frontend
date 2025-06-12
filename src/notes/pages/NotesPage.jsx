@@ -119,15 +119,14 @@ export const NotesPage = () => {
               sm: "1.5rem",
               md: "1.7rem",
             },
-            fontWeight: 600,
           }}
         >
-          {/* <NotesIcon
+          <NotesIcon
             fontSize="large"
             color="primary"
             sx={{ marginRight: 2 }}
-          ></NotesIcon> */}
-          📝 Notes
+          ></NotesIcon>
+          Notes
         </Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
           <Button

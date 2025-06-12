@@ -1,5 +1,4 @@
-import { Box, CircularProgress, Grid2 } from "@mui/material";
-import React from "react";
+import { CircularProgress, Grid2 } from "@mui/material";
 
 export const CheckingAuth = () => {
   return (
@@ -20,7 +19,7 @@ export const CheckingAuth = () => {
         item
         sx={{
           width: { sm: 450 },
-          //   backgroundColor: "secondary.main",
+
           padding: 3,
           borderRadius: 2,
           textAlign: "center",

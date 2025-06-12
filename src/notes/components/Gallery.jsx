@@ -19,11 +19,8 @@ import {
 import { useState } from "react";
 
 import { PushPin } from "@mui/icons-material";
-// import Swal from "sweetalert2";
 
 export const Gallery = ({ images, onRemove, onEdit, onPin }) => {
-  const dispatch = useDispatch();
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const [editAltText, setEditAltText] = useState("");
   const [showGallery, setShowGallery] = useState(false);

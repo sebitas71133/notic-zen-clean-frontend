@@ -10,6 +10,10 @@ import {
   exportNotesToExcel,
   exportNotesToPDF,
 } from "../../utils/exportNotes";
+import {
+  useGetAllSubNotesQuery,
+  useGetSubNotesQuery,
+} from "../../../services/subNoteApi";
 
 export const ToolsPage = () => {
   const {
@@ -18,25 +22,36 @@ export const ToolsPage = () => {
     isError: isNotesError,
   } = useGetNotesQuery({ page: 1, limit: 500 });
 
+  const {
+    data: subNotesData = [],
+    isLoading: isSubNotesLoading,
+    isError: isSubNotesError,
+  } = useGetAllSubNotesQuery();
+
   if (isNotesLoading || !notesData.data) {
     return <div>Cargando notas...</div>;
   }
 
+  if (isSubNotesLoading || !subNotesData.data) {
+    return <div>Cargando sub notas...</div>;
+  }
+
   const notes = notesData.data;
+  const subnotes = subNotesData.data;
 
   const handleExport = (type) => {
     switch (type) {
       case "json":
-        exportJSON(notes);
+        exportJSON(notes, subnotes);
         break;
       case "pdf":
-        exportNotesToPDF(notes);
+        exportNotesToPDF(notes, subnotes);
         break;
       case "excel":
-        exportNotesToExcel(notes);
+        exportNotesToExcel(notes, subnotes);
         break;
       case "zip":
-        exportNotesAsZip(notes);
+        exportNotesAsZip(notes, subnotes);
         break;
       default:
         break;

@@ -51,7 +51,7 @@ export const SideBar = ({ drawerWidth = 240, displayName }) => {
         display: "flex",
         flexDirection: "column",
         height: "100vh",
-        justifyContent: "space-between", // Separa la parte superior de la inferior
+        justifyContent: "space-between",
       }}
     >
       {/* Parte superior */}

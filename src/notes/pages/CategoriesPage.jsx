@@ -14,10 +14,10 @@ import {
   Pagination,
 } from "@mui/material";
 import { NoteAdd as NoteAddIcon } from "@mui/icons-material";
+import CategoryIcon from "@mui/icons-material/Category";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CategoryIcon from "@mui/icons-material/Category";
 
 import { useOutletContext } from "react-router-dom";
 
@@ -187,15 +187,14 @@ export const CategoriesPage = () => {
               sm: "1.5rem",
               md: "1.7rem",
             },
-            fontWeight: 600,
           }}
         >
-          {/* <CategoryIcon
+          <CategoryIcon
             fontSize="large"
             color="primary"
             sx={{ marginRight: 2 }}
-          ></CategoryIcon> */}
-          🗂️ Categories
+          ></CategoryIcon>
+          Categories
         </Typography>
         <Button
           variant="contained"

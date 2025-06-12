@@ -1,7 +1,6 @@
 import {
   AppBar,
   Grid,
-  IconButton,
   Toolbar,
   Typography,
   Tooltip,
@@ -10,17 +9,14 @@ import {
   Box,
   Stack,
 } from "@mui/material";
-import { LogoutOutlined } from "@mui/icons-material";
+
 import { useDispatch, useSelector } from "react-redux";
 import { toggleDarkMode } from "../../store/slices/themeSlice";
 import { DarkMode } from "../../components/DarkMode";
-import { useNavigate } from "react-router-dom";
-import { logoutReducer } from "../../store/slices/authSlice";
 
 export const NavBar = ({ drawerWidth = 240 }) => {
   const { darkMode } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg")); // usa el tema para breakpoint
@@ -28,11 +24,6 @@ export const NavBar = ({ drawerWidth = 240 }) => {
   const setDarkMode = () => {
     dispatch(toggleDarkMode());
   };
-
-  // const handleLogout = () => {
-  //   dispatch(logoutReducer());
-  //   navigate("/auth", { replace: true }); // Redirige al login
-  // };
 
   return (
     <AppBar
@@ -93,19 +84,6 @@ export const NavBar = ({ drawerWidth = 240 }) => {
                 <DarkMode darkMode={darkMode} setDarkMode={setDarkMode} />
               </Tooltip>
             </Grid>
-
-            {/* <Grid item>
-              <Tooltip title="Logout">
-                <IconButton
-                  onClick={handleLogout}
-                  color="error"
-                  size="large"
-                  aria-label="logout"
-                >
-                  <LogoutOutlined fontSize="medium" />
-                </IconButton>
-              </Tooltip>
-            </Grid> */}
           </Grid>
         </Grid>
       </Toolbar>

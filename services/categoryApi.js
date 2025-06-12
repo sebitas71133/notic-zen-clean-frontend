@@ -41,9 +41,4 @@ export const {
   useDeleteCategoryMutation,
   useUpdateCategoryMutation,
   useGetCategoriesQuery,
-  // useAddNoteMutation,
-  // useDeleteNoteMutation,
-  // useUpdateNoteMutation,
-  // useGetNotesQuery,
-  // useLazyGetNotesQuery,
 } = categoryApi;

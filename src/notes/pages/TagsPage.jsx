@@ -138,15 +138,15 @@ export const TagsPage = () => {
               sm: "1.5rem",
               md: "1.7rem",
             },
-            fontWeight: 600,
+            // fontWeight: 600,
           }}
         >
-          {/* <LabelIcon
+          <LabelIcon
             fontSize="large"
             color="primary"
             sx={{ marginRight: 2 }}
-          ></LabelIcon> */}
-          🏷️ Tags
+          ></LabelIcon>
+          Tags
         </Typography>
         <Button
           variant="contained"

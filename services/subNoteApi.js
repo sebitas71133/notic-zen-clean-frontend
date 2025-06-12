@@ -78,6 +78,14 @@ export const subNoteApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["SubImages", "Images"],
     }),
+    getAllSubNotes: builder.query({
+      query: () => ({
+        url: `/note/subnotes`,
+        method: "GET",
+      }),
+
+      providesTags: ["AllSubNotes"],
+    }),
   }),
 });
 
@@ -88,4 +96,5 @@ export const {
   useDeleteSubNoteMutation,
   useCleanOrphanSubImagesMutation,
   useGetAllSubImagesQuery,
+  useGetAllSubNotesQuery,
 } = subNoteApi;

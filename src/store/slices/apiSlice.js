@@ -24,6 +24,7 @@ export const apiSlice = createApi({
     "Images",
     "SubNotes",
     "SubImages",
+    "AllSubNotes",
   ],
   endpoints: () => ({}), // vacío al inicio
 });
