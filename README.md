@@ -87,6 +87,12 @@ npm run dev
 
 ---
 
+## 🛠️ Autor
+
+Jesús Sebastián Huamanculi Casavilca - GitHub
+
+---
+
 ## 📄 Licencia
 
 MIT
