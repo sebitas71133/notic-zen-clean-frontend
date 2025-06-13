@@ -62,14 +62,10 @@ export const SubNoteCard = () => {
   const { noteId, subNoteId } = useParams();
   const { tags } = useOutletContext();
 
-  console.log({ tags });
-
   const handleBack = () => {
     dispatch(setActiveSubNote(null));
     navigate(`/app/note/${noteId}`); // Volver a la lista de notas
   };
-
-  console.log({ noteId, subNoteId });
 
   const [addSubNote, { isLoading: isLoadingCreateNote }] =
     useAddSubNoteMutation();
@@ -193,8 +189,6 @@ export const SubNoteCard = () => {
 
   const handleDeleteNote = async () => {
     if (!activeSubNote) return;
-
-    console.log({ activeSubNoteId: activeSubNote.id });
 
     const result = await Swal.fire({
       title: `Delete subnote "${activeSubNote.title}"?`,

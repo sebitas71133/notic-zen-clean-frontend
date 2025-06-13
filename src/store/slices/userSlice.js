@@ -21,7 +21,6 @@ const userSlice = createSlice({
       if (foundUser) {
         state.userRole = foundUser.role; // Solo guarda el rol en el estado
       } else {
-        console.log(state.users);
         state.userRole = null;
       }
     },

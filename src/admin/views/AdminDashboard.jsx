@@ -16,8 +16,6 @@ export const AdminDashboard = () => {
     return <div>Cargando documents</div>;
   }
 
-  console.log(data.data);
-
   const stats = [
     {
       label: "Usuarios",

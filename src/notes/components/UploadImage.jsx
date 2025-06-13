@@ -26,7 +26,6 @@ export const UploadImage = ({ onUpload }) => {
         },
         (error, result) => {
           if (!error && result.event === "success") {
-            console.log("Imagen subida: ", result.info.secure_url);
             setPendingImages((prev) => prev + 1); // Aumentar contador
             onUpload(result.info.secure_url); // Enviar imagen a la nota
           }

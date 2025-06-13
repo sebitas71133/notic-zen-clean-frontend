@@ -28,7 +28,6 @@ export const useAuthStore = () => {
       dispatch(checkingReducer());
 
       const { data, token } = await loginRequest({ email, password }).unwrap(); //lanza el error el unwrap
-      console.log({ data });
 
       dispatch(loginReducer({ token: token, user: data }));
       toast.success(`¡Bienvenido, ${data.name}!`);
@@ -74,7 +73,6 @@ export const useAuthStore = () => {
 
   //   /* ---------- renew ---------- */
   const checkAuthToken = async (token) => {
-    console.log("Checkeando el token");
     //const token = localStorage.getItem("token");
 
     if (!token) return dispatch(logoutReducer());

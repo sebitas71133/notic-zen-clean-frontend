@@ -10,7 +10,6 @@ const drawerWidth = 280;
 
 export const AdminLayout = () => {
   const { user } = useSelector((state) => state.auth);
-  console.log({ userL: user });
 
   if (user?.role.name !== "admin") {
     return <NotFoundPage></NotFoundPage>;

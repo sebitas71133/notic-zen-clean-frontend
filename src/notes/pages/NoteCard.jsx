@@ -143,8 +143,6 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
         isArchived: toBoolean(data.isArchived),
       };
 
-      console.log({ payload });
-
       let response;
       if (isNewNote) {
         response = await addNote(payload).unwrap();
@@ -180,8 +178,6 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
 
   const handleDeleteNote = async () => {
     if (!activeNote) return;
-
-    console.log({ activeNoteId: activeNote.id });
 
     const result = await Swal.fire({
       title: `Delete note "${activeNote.title}"?`,
@@ -496,6 +492,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
                 {watch("content", "").length}/{MAX_LENGTH}
               </Typography>
             </Grid>
+            {/* Editor de contenido */}
 
             {/* Tags */}
             <Grid item xs={12}>

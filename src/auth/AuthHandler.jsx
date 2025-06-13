@@ -11,14 +11,13 @@ import { useAuthStore } from "../hooks/useAuthStore";
 export const AuthHandler = () => {
   const { status, checkAuthToken, user } = useAuthStore();
   const navigate = useNavigate();
-  console.log({ user });
+
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (status === "checking") {
       checkAuthToken(token);
     }
-    console.log({ status });
   }, [status]);
 
   useEffect(() => {

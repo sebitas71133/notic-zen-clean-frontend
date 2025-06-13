@@ -28,7 +28,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-
+import NotesIcon from "@mui/icons-material/Notes";
 import {
   NoteAdd as NoteAddIcon,
   Search as SearchIcon,
@@ -101,8 +101,6 @@ export const SubNotesView = ({ noteId }) => {
   const displayedSubNotes =
     filteredSubNotes.length > 0 ? filteredSubNotes : subNotes || [];
 
-  console.log({ subNotes });
-
   return (
     <Box>
       {/* TITULO Y BOTON DE AGRTE */}
@@ -124,10 +122,14 @@ export const SubNotesView = ({ noteId }) => {
               sm: "1.5rem",
               md: "1.7rem",
             },
-            fontWeight: 600,
           }}
         >
-          📝 Sub Notes
+          <NotesIcon
+            fontSize="large"
+            color="primary"
+            sx={{ marginRight: 2 }}
+          ></NotesIcon>
+          Sub Notes
         </Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
           <Button

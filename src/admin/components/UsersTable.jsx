@@ -48,7 +48,7 @@ export const UsersTable = ({ users }) => {
       console.log("✅ Rol actualizado:", response);
     } catch (err) {
       console.error("❌ Error al actualizar rol:", err);
-      wal.fire("Oops", `${err.data.error}`);
+      Swal.fire("Oops", `${err.data.error}`);
     }
   };
 

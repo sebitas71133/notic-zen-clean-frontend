@@ -61,7 +61,6 @@ export const CloudinaryView = () => {
   const handleCleanOrphanImages = async () => {
     try {
       const res = await cleanOrphanImages().unwrap();
-      console.log(res);
     } catch (err) {
       console.error(err);
     }
@@ -70,7 +69,6 @@ export const CloudinaryView = () => {
   const handleCleanOrphanSubImages = async () => {
     try {
       const res = await cleanOrphanSubImages().unwrap();
-      console.log(res);
     } catch (err) {
       console.error(err);
     }

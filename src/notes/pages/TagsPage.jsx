@@ -66,8 +66,6 @@ export const TagsPage = () => {
     setIsEditModalOpen(true);
   };
 
-  console.log({ tagsData });
-
   const handleDeleteTag = async (tag) => {
     if (!tag?.id) return;
 

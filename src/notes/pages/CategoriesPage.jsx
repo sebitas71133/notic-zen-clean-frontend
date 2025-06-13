@@ -77,12 +77,11 @@ export const CategoriesPage = () => {
 
   const handleEditCategory = (category) => {
     setSelectedCategory(category);
-    console.log({ category });
+
     setIsEditModalOpen(true);
   };
 
   const handleDeleteCategory = async (selectedCategory) => {
-    console.log("borrando ", selectedCategory);
     if (!selectedCategory?.id) return;
 
     const result = await Swal.fire({
@@ -135,7 +134,6 @@ export const CategoriesPage = () => {
     let response;
     try {
       if (selectedCategory.id) {
-        console.log("EDITANDO :  ", selectedCategory);
         response = await updateCategory(selectedCategory).unwrap();
         console.log("✅ Categoria editada:", response);
       } else {

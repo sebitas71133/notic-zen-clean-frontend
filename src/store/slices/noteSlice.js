@@ -20,7 +20,7 @@ export const notesSlice = createSlice({
   reducers: {
     setActiveNote: (state, action) => {
       state.activeNote = action.payload;
-      console.log(state.activeNote);
+
       localStorage.setItem("activeNote", JSON.stringify(action.payload));
     },
     clearActiveNote: (state) => {
@@ -44,7 +44,6 @@ export const notesSlice = createSlice({
     setNotes: (state, action) => {
       state.allNotes = action.payload;
       state.filteredNotes = [];
-      // console.log(state.allNotes);
     },
     setSearchTerm: (state, action) => {
       state.searchTerm = action.payload;
@@ -61,7 +60,6 @@ export const notesSlice = createSlice({
     setSubNotes: (state, action) => {
       state.allSubnotes = action.payload;
       state.filteredSubNotes = [];
-      // console.log(state.allNotes);
     },
     setSearchSubTerm: (state, action) => {
       state.searchSubTerm = action.payload;
@@ -75,7 +73,7 @@ export const notesSlice = createSlice({
 
     setActiveSubNote: (state, action) => {
       state.activeSubNote = action.payload;
-      console.log(state.activeSubNote);
+
       localStorage.setItem("activeSubNote", JSON.stringify(action.payload));
     },
   },

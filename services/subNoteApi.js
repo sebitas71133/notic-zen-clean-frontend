@@ -15,7 +15,7 @@ export const subNoteApi = apiSlice.injectEndpoints({
         sortDate,
       }) => {
         let url = `/note/${noteId}/subnotes?page=${page}&limit=${limit}`;
-        console.log(url);
+
         if (tagId) {
           url += `&tagId=${tagId}`;
         }

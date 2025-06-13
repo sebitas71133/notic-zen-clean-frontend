@@ -34,7 +34,6 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import {
   setActiveNote,
   setFilteredNotes,
-  setNotes,
   setSearchTerm,
 } from "../../store/slices/noteSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -69,8 +68,6 @@ export const NotesPage = () => {
     ...(sortTitle && { sortTitle: sortTitle }),
     ...(sortDate && { sortDate: sortDate }),
   });
-
-  console.log({ notesData });
 
   const totalPages = Math.ceil(notesTotal / limit);
 
