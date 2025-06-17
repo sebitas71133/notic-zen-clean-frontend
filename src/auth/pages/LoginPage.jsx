@@ -96,7 +96,9 @@ export const LoginPage = () => {
         <Typography variant="h5" mb={2}>
           {isLogin ? "Welcome Back" : "Create Account"}
         </Typography>
-
+        <Typography variant="h7" color="warning">
+          {"USER : demo@gmail.com |  PASS : 123456"}
+        </Typography>
         <Tabs
           value={isLogin ? 0 : 1}
           onChange={handleTabChange}
