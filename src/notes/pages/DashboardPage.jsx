@@ -1,5 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { Grid, Paper, Typography, Box, useTheme, Tooltip } from "@mui/material";
+import {
+  Grid,
+  Paper,
+  Typography,
+  Box,
+  useTheme,
+  Tooltip,
+  CircularProgress,
+} from "@mui/material";
 import NotesIcon from "@mui/icons-material/Note";
 import CategoryIcon from "@mui/icons-material/Category";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
@@ -15,7 +23,7 @@ export const DashboardPage = () => {
   const theme = useTheme();
 
   if (isLoading || !documents?.data) {
-    return <div>Cargando stats...</div>;
+    return <CircularProgress size={20} />;
   }
 
   const stats = [

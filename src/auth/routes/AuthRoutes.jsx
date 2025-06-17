@@ -1,3 +1,4 @@
+import { LogoutSuccess } from "../../components/LogoutSuccess";
 import { AuthLayout } from "../layout/AuthLayout";
 import { LoginPage } from "../pages/LoginPage";
 
@@ -12,6 +13,10 @@ const authRoutes = {
     {
       path: "login",
       element: <LoginPage />,
+    },
+    {
+      path: "logout",
+      element: <LogoutSuccess />,
     },
   ],
 };

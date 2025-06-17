@@ -1,5 +1,5 @@
 import { useOutletContext } from "react-router-dom";
-import { Grid, Paper, Typography, Box } from "@mui/material";
+import { Grid, Paper, Typography, Box, CircularProgress } from "@mui/material";
 import NotesIcon from "@mui/icons-material/Note";
 import CategoryIcon from "@mui/icons-material/Category";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
@@ -13,7 +13,7 @@ export const AdminDashboard = () => {
   const { data, isLoading, isError } = useGetTotalDocumentsQuery();
 
   if (isLoading || !data) {
-    return <div>Cargando documents</div>;
+    return <CircularProgress size={20} />;
   }
 
   const stats = [

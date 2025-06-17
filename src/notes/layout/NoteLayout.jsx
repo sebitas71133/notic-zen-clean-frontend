@@ -13,6 +13,7 @@ import { useGetNotesQuery } from "../../../services/noteApi.js";
 import { useDispatch } from "react-redux";
 import { setNotes } from "../../store/slices/noteSlice.js";
 import { useEffect } from "react";
+import { FullScreenLoader } from "../components/FullScreenLoader.jsx";
 
 const drawerWidth = 280;
 
@@ -45,15 +46,15 @@ export const NoteLayout = () => {
   }, [notesData, dispatch]);
 
   if (!categoriesData?.data || isCategoriesLoading) {
-    return <div>Cargando categorias...</div>;
+    return <FullScreenLoader message="Cargando categorías..." />;
   }
 
   if (isTagsLoading || !tagsData?.data) {
-    return <div>Cargando tags...</div>;
+    return <FullScreenLoader message="Cargando etiquetas..." />;
   }
 
   if (isNotesLoading || !notesData?.data) {
-    return <div>Cargando notas...</div>;
+    return <FullScreenLoader message="Cargando notas..." />;
   }
 
   const notesTotal = notesData.data?.length ?? 0;

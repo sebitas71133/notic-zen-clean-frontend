@@ -293,6 +293,25 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
     };
   }, []);
 
+  if (isLoadingCreateNote || isLoadingSaveNote) {
+    return (
+      <Box
+        sx={{
+          minHeight: "300px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+        }}
+      >
+        <CircularProgress color="primary" />
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          Guardando nota...
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box
       sx={{ p: { xs: 0, sm: 4 }, m: { xs: 0, sm: 4 } }}

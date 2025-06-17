@@ -39,6 +39,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useGetNotesQuery } from "../../../services/noteApi";
 import { useGetTagsQuery } from "../../../services/tagApi";
+import { FullScreenLoader } from "../components/FullScreenLoader";
 
 export const NotesPage = () => {
   const { categories, notesTotal } = useOutletContext();
@@ -91,7 +92,7 @@ export const NotesPage = () => {
   };
 
   if (isNotesLoading || !notesData.data) {
-    return <div>Cargando notas...</div>;
+    return <FullScreenLoader message="Cargando notas..." />;
   }
 
   const notes = notesData.data;

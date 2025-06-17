@@ -12,6 +12,7 @@ import {
   Modal,
   Stack,
   Pagination,
+  CircularProgress,
 } from "@mui/material";
 import { NoteAdd as NoteAddIcon } from "@mui/icons-material";
 import CategoryIcon from "@mui/icons-material/Category";
@@ -164,7 +165,7 @@ export const CategoriesPage = () => {
   };
 
   if (isCategoriesLoading || !categoriesData.data) {
-    return <div>Cargando notas...</div>;
+    return <CircularProgress size={20} />;
   }
   return (
     <Box>

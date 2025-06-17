@@ -1,4 +1,11 @@
-import { Box, Typography, Grid, Button, Paper } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Grid,
+  Button,
+  Paper,
+  CircularProgress,
+} from "@mui/material";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import FolderZipIcon from "@mui/icons-material/FolderZip";
@@ -10,10 +17,7 @@ import {
   exportNotesToExcel,
   exportNotesToPDF,
 } from "../../utils/exportNotes";
-import {
-  useGetAllSubNotesQuery,
-  useGetSubNotesQuery,
-} from "../../../services/subNoteApi";
+import { useGetAllSubNotesQuery } from "../../../services/subNoteApi";
 
 export const ToolsPage = () => {
   const {
@@ -29,11 +33,11 @@ export const ToolsPage = () => {
   } = useGetAllSubNotesQuery();
 
   if (isNotesLoading || !notesData.data) {
-    return <div>Cargando notas...</div>;
+    return <CircularProgress size={20} />;
   }
 
   if (isSubNotesLoading || !subNotesData.data) {
-    return <div>Cargando sub notas...</div>;
+    return <CircularProgress size={20} />;
   }
 
   const notes = notesData.data;

@@ -1,32 +1,24 @@
-import { CircularProgress, Grid2 } from "@mui/material";
+import { CircularProgress, Typography, Box } from "@mui/material";
 
 export const CheckingAuth = () => {
   return (
-    <Grid2
-      container
-      spacing={0}
-      margin={0}
-      direction="column"
+    <Box
+      display="flex"
+      flexDirection="column"
       alignItems="center"
       justifyContent="center"
+      minHeight="100vh"
       sx={{
-        minHeight: "100vh",
         backgroundColor: "primary.main",
         padding: 4,
+        color: "white",
+        textAlign: "center",
       }}
     >
-      <Grid2
-        item
-        sx={{
-          width: { sm: 450 },
-
-          padding: 3,
-          borderRadius: 2,
-          textAlign: "center",
-        }}
-      >
-        <CircularProgress color="warning" />
-      </Grid2>
-    </Grid2>
+      <CircularProgress color="warning" size={60} thickness={5} />
+      <Typography variant="h6" sx={{ mt: 3 }}>
+        Verificando autenticación...
+      </Typography>
+    </Box>
   );
 };

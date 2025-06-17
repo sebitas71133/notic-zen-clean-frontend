@@ -14,6 +14,7 @@ import {
   CardActionArea,
   CardContent,
   CardMedia,
+  CircularProgress,
   FormControl,
   Grid,
   IconButton,
@@ -94,7 +95,7 @@ export const SubNotesView = ({ noteId }) => {
   };
 
   if (isSubNotesLoading) {
-    return <div>Cargando sub notas...</div>;
+    return <CircularProgress size={20} />;
   }
   const subNotes = subNotesData.data;
 

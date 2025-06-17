@@ -24,25 +24,18 @@ import {
 import BuildIcon from "@mui/icons-material/Build";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { logoutReducer } from "../../store/slices/authSlice";
-import { apiSlice } from "../../store/slices/apiSlice";
 
 export const SideBar = ({ drawerWidth = 240, displayName }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isLargeScreen = useMediaQuery("(min-width: 1024px)");
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   const handleLogout = () => {
-    dispatch(logoutReducer());
-    dispatch(apiSlice.util.resetApiState()); // limpia caché de RTK Query (notas, tags, etc.)
-    navigate("/auth", { replace: true });
+    navigate("/auth/logout", { replace: true });
   };
 
   const drawerContent = (
