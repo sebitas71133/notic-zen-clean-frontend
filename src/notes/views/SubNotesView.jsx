@@ -22,6 +22,7 @@ import {
   InputLabel,
   Menu,
   MenuItem,
+  Pagination,
   Paper,
   Select,
   Stack,
@@ -70,6 +71,17 @@ export const SubNotesView = ({ noteId }) => {
       ...(sortTitle && { sortTitle: sortTitle }),
       ...(sortDate && { sortDate: sortDate }),
     });
+
+  const { data: subNotesData2 = [], isLoading: isSubNotesLoading2 } =
+    useGetSubNotesQuery({
+      page: 1,
+      limit: 500,
+      noteId: noteId,
+    });
+
+  const subNotesTotal = subNotesData2?.data?.length;
+
+  const totalPages = Math.ceil(subNotesTotal / limit);
 
   const { data: tagsData = [] } = useGetTagsQuery({ page: 1, limit: 50 });
 
@@ -481,13 +493,13 @@ export const SubNotesView = ({ noteId }) => {
         )}
       </Grid>
 
-      {/* <Stack spacing={2} mt={5} alignItems="center">
+      <Stack spacing={2} mt={5} alignItems="center">
         <Pagination
           count={totalPages}
           page={page}
           onChange={(_, value) => setPage(value)}
         />
-      </Stack> */}
+      </Stack>
     </Box>
   );
 };
