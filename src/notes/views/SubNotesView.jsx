@@ -17,6 +17,7 @@ import {
   CircularProgress,
   FormControl,
   Grid,
+  Grid2,
   IconButton,
   InputAdornment,
   InputLabel,
@@ -232,7 +233,7 @@ export const SubNotesView = ({ noteId }) => {
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
                 <MenuItem value="all">All</MenuItem>
-                <MenuItem value="active">Activas</MenuItem>
+                {/* <MenuItem value="active">Activas</MenuItem> */}
                 <MenuItem value="pinned">Pinned</MenuItem>
                 <MenuItem value="archived">Archived</MenuItem>
               </Select>
@@ -291,184 +292,114 @@ export const SubNotesView = ({ noteId }) => {
       </Box>
 
       {/* SUBNOTES */}
-      <Grid container spacing={3}>
+      <Grid2 container spacing={1.5}>
+        {" "}
+        {/* menos espacio entre tarjetas */}
         {subNotes?.length > 0 ? (
           displayedSubNotes.map((subNote) => (
-            <Grid item xs={6} sm={3} md={3} key={subNote.id}>
+            <Grid2 size={{ xs: 4, sm: 3, md: 3, xl: 2 }} key={subNote.id}>
               <Card
                 sx={{
-                  borderRadius: 3,
-                  height: "320px",
+                  borderRadius: 2,
+                  height: 220, // altura consistente
                   display: "flex",
                   flexDirection: "column",
-                  boxShadow: 3,
+                  boxShadow: 2,
                   transition: "transform 0.2s ease, box-shadow 0.3s ease",
-
                   backgroundColor: (theme) => theme.palette.background.paper,
                   "&:hover": {
-                    transform: "translateY(-4px)",
-                    boxShadow: `0 8px 16px rgba(0,0,0,0.15)`,
+                    transform: "translateY(-3px)",
+                    boxShadow: 5,
                   },
                 }}
               >
                 <CardActionArea
-                  sx={{ height: "100%" }}
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
                   onClick={() => {
                     dispatch(setActiveSubNote(subNote));
                     navigate(`/app/note/${noteId}/subnote/${subNote.id}`);
                   }}
                 >
-                  {subNote.images?.length > 0 && (
-                    <CardMedia
-                      component="img"
-                      height="120"
-                      image={subNote.images[0].url}
-                      alt={subNote.title || "Imagen de la nota"}
-                      sx={{
-                        objectFit: "cover",
-                        borderTopLeftRadius: 12,
-                        borderTopRightRadius: 12,
-                        width: "100%",
-                        display: "block",
-                      }}
-                    />
-                  )}
+                  {/* Imagen */}
+                  <CardMedia
+                    component="img"
+                    height="180"
+                    image={
+                      subNote.images?.length > 0
+                        ? subNote.images[0].url
+                        : "/images/nyan-cat.gif"
+                    }
+                    alt={subNote.title || "Imagen de la nota"}
+                    sx={{
+                      objectFit: "cover",
+                      width: "100%",
+                      borderTopLeftRadius: 8,
+                      borderTopRightRadius: 8,
+                    }}
+                  />
 
-                  <CardContent sx={{ p: 1.5 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        mb: 0.5,
-                      }}
-                    >
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="bold"
-                        noWrap
-                        sx={{
-                          display: "-webkit-box",
-                          WebkitBoxOrient: "vertical",
-                          WebkitLineClamp: 1,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "normal",
-                          maxWidth: "100%",
-                          wordBreak: "break-word",
-                          mb: 1,
-                        }}
-                      >
-                        {subNote.title || "Sin título"}
-                      </Typography>
-
-                      <Box sx={{ display: "flex", gap: 0.5, opacity: 0.6 }}>
-                        {subNote.isPinned && (
-                          <Tooltip title="Fijada">
-                            <PushPinIcon
-                              color="primary.main"
-                              fontSize="small"
-                            />
-                          </Tooltip>
-                        )}
-                        {subNote.isArchived && (
-                          <Tooltip title="Archivada">
-                            <ArchiveIcon color="action" fontSize="small" />
-                          </Tooltip>
-                        )}
-                      </Box>
-                    </Box>
-
+                  {/* Contenido */}
+                  <CardContent
+                    sx={{
+                      flexGrow: 1,
+                      width: "100%",
+                      p: 1.2,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {/* Título */}
                     <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      noWrap
+                      variant="subtitle2"
+                      fontWeight="bold"
                       sx={{
-                        display: "-webkit-box",
-                        WebkitBoxOrient: "vertical",
-                        WebkitLineClamp: 1,
                         overflow: "hidden",
                         textOverflow: "ellipsis",
-                        whiteSpace: "normal",
-                        maxWidth: "100%",
-                        wordBreak: "break-word",
+                        whiteSpace: "nowrap",
                         mb: 1,
                       }}
                     >
-                      {subNote.description || "Sin contenido"}
+                      {subNote.title || "Sin título"}
                     </Typography>
 
-                    {/* {subNote.category && (
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                      >
-                        <Box
-                          sx={{
-                            width: 10,
-                            height: 10,
-                            borderRadius: "50%",
-                            backgroundColor: subNote.category.color,
-                            mr: 1,
-                          }}
-                        />
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            fontWeight: "bold",
-                            color: note.category.color,
-                          }}
-                        >
-                          {note.category.name}
-                        </Typography>
-                      </Box>
-                    )} */}
-
-                    {subNote.tags?.length > 0 && (
+                    {/* Tags */}
+                    {/* {subNote.tags?.length > 0 && (
                       <Box
                         sx={{
                           display: "flex",
                           gap: 0.5,
                           flexWrap: "wrap",
-                          mb: 1,
                         }}
                       >
-                        {subNote.tags.slice(0, 3).map((tag) => (
+                        {subNote.tags.slice(0, 2).map((tag) => (
                           <Typography
                             key={tag.id}
                             variant="caption"
                             sx={{
                               backgroundColor: "#e0e0e0",
-                              px: 0.8,
-                              py: 0.3,
+                              px: 0.6,
+                              py: 0.2,
                               borderRadius: 1,
-                              color: "black",
-                              fontSize: "0.72rem",
+                              fontSize: "0.7rem",
                             }}
                           >
                             #{tag.name}
                           </Typography>
                         ))}
                       </Box>
-                    )}
-
-                    <Typography variant="caption" color="text.secondary">
-                      {new Date(subNote.updatedAt).toLocaleDateString("es-PE", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: false,
-                      })}
-                    </Typography>
+                    )} */}
                   </CardContent>
                 </CardActionArea>
               </Card>
-            </Grid>
+            </Grid2>
           ))
         ) : (
-          <Grid item xs={12}>
+          <Grid2 xs={12}>
             <Paper sx={{ p: 3, textAlign: "center" }}>
               <Typography variant="body1">
                 No se encontraron notas con los filtros actuales.
@@ -489,9 +420,9 @@ export const SubNotesView = ({ noteId }) => {
                 Add subNote
               </Button>
             </Paper>
-          </Grid>
+          </Grid2>
         )}
-      </Grid>
+      </Grid2>
 
       <Stack spacing={2} mt={5} alignItems="center">
         <Pagination

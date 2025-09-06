@@ -37,8 +37,7 @@ export const SideBarAdmin = ({ drawerWidth = 240, displayName }) => {
 
   const handleLogout = () => {
     dispatch(logoutReducer());
-    dispatch(apiSlice.util.resetApiState()); // limpia caché de RTK Query (notas, tags, etc.)
-    navigate("/auth", { replace: true });
+    // dispatch(apiSlice.util.resetApiState()); // limpia caché de RTK Query no funciona aca porque aun estan montados
   };
 
   const drawerContent = (

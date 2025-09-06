@@ -314,7 +314,12 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
 
   return (
     <Box
-      sx={{ p: { xs: 0, sm: 4 }, m: { xs: 0, sm: 4 } }}
+      sx={{
+        p: { xs: 0, sm: 4 },
+        m: { xs: 0, sm: 4 },
+        width: { sx: "100%", sm: "100%", md: "90%", xl: "70%" },
+        // mx: "auto",
+      }}
       component="form"
       onSubmit={handleSubmit(onSubmit)}
     >

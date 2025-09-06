@@ -19,7 +19,7 @@ export const LogoutSuccess = () => {
     const timeout = setTimeout(() => {
       navigate("/auth");
       dispatch(logoutReducer());
-      dispatch(apiSlice.util.resetApiState()); // limpia caché de RTK Query (notas, tags, etc.)
+      dispatch(apiSlice.util.resetApiState()); //Aca si limpia caché de RTK Query (notas, tags, etc.)
     }, 2000);
 
     return () => {

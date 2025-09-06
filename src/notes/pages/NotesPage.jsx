@@ -20,6 +20,7 @@ import {
   CardMedia,
   Stack,
   Pagination,
+  Grid2,
 } from "@mui/material";
 import {
   NoteAdd as NoteAddIcon,
@@ -40,6 +41,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useGetNotesQuery } from "../../../services/noteApi";
 import { useGetTagsQuery } from "../../../services/tagApi";
 import { FullScreenLoader } from "../components/FullScreenLoader";
+
+const nyan_cat =
+  "Nyan Cat es el nombre de un vídeo de YouTube subido en abril de 2011, que se convirtió en un fenómeno de Internet, en referencia a un gif animado de 8 bits de un gato volando con el cuerpo";
 
 export const NotesPage = () => {
   const { categories, notesTotal } = useOutletContext();
@@ -288,20 +292,19 @@ export const NotesPage = () => {
         </Menu>
       </Box>
 
-      <Grid container spacing={3}>
+      <Grid2 container spacing={3}>
         {notes.length > 0 ? (
           displayedNotes.map((note) => (
-            <Grid item xs={6} sm={3} md={3} xl={2} key={note.id}>
+            <Grid2 size={{ xs: 6, sm: 3, md: 3, xl: 2 }} key={note.id}>
               <Card
                 sx={{
                   borderRadius: 3,
-                  height: "320px",
+                  height: 320,
                   display: "flex",
                   flexDirection: "column",
                   boxShadow: 3,
                   transition: "transform 0.2s ease, box-shadow 0.3s ease",
-                  borderLeft: `6px solid ${note.category?.color || "#90caf9"}`, // Color de borde por categoría
-                  backgroundColor: (theme) => theme.palette.background.paper,
+                  borderLeft: `6px solid ${note.category?.color || "#90caf9"}`,
                   "&:hover": {
                     transform: "translateY(-4px)",
                     boxShadow: `0 8px 16px rgba(0,0,0,0.15)`,
@@ -309,51 +312,62 @@ export const NotesPage = () => {
                 }}
               >
                 <CardActionArea
-                  sx={{ height: "100%" }}
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
                   onClick={() => {
                     dispatch(setActiveNote(note));
                     navigate(`/app/note/${note.id}`);
                   }}
                 >
-                  {note.images?.length > 0 && (
-                    <CardMedia
-                      component="img"
-                      height="120"
-                      image={note.images[0].url}
-                      alt={note.title || "Imagen de la nota"}
-                      sx={{
-                        objectFit: "cover",
-                        borderTopLeftRadius: 12,
-                        borderTopRightRadius: 12,
-                        width: "100%",
-                        display: "block",
-                      }}
-                    />
-                  )}
+                  {/* Imagen */}
+                  <CardMedia
+                    component="img"
+                    image={
+                      note.images?.length > 0
+                        ? note.images[0].url
+                        : "/images/nyan-cat.gif"
+                    }
+                    alt={note.title || "Imagen de la nota"}
+                    sx={{
+                      height: 120, // 👈 fijo
+                      objectFit: "cover",
+                      borderTopLeftRadius: 12,
+                      borderTopRightRadius: 12,
+                      flexShrink: 0,
+                    }}
+                  />
 
-                  <CardContent sx={{ p: 1.5 }}>
+                  {/* Contenido */}
+                  <CardContent
+                    sx={{
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      p: 1.5,
+                    }}
+                  >
+                    {/* Título */}
                     <Box
                       sx={{
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
+                        height: 35, // 👈 fijo
                         mb: 0.5,
                       }}
                     >
                       <Typography
                         variant="subtitle1"
                         fontWeight="bold"
-                        noWrap
                         sx={{
                           display: "-webkit-box",
                           WebkitBoxOrient: "vertical",
                           WebkitLineClamp: 1,
                           overflow: "hidden",
                           textOverflow: "ellipsis",
-                          whiteSpace: "normal",
-                          maxWidth: "100%",
-                          wordBreak: "break-word",
-                          mb: 1,
                         }}
                       >
                         {note.title || "Sin título"}
@@ -362,93 +376,99 @@ export const NotesPage = () => {
                       <Box sx={{ display: "flex", gap: 0.5, opacity: 0.6 }}>
                         {note.isPinned && (
                           <Tooltip title="Fijada">
-                            <PushPinIcon
-                              color="primary.main"
-                              fontSize="small"
-                            />
+                            <PushPinIcon fontSize="small" color="primary" />
                           </Tooltip>
                         )}
                         {note.isArchived && (
                           <Tooltip title="Archivada">
-                            <ArchiveIcon color="action" fontSize="small" />
+                            <ArchiveIcon fontSize="small" color="action" />
                           </Tooltip>
                         )}
                       </Box>
                     </Box>
 
+                    {/* Texto */}
                     <Typography
                       variant="body2"
                       color="text.secondary"
-                      noWrap
                       sx={{
-                        display: "-webkit-box",
-                        WebkitBoxOrient: "vertical",
-                        WebkitLineClamp: 1,
+                        height: 60, // 👈 fijo
                         overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "normal",
-                        maxWidth: "100%",
-                        wordBreak: "break-word",
-                        mb: 1,
+                        display: "-webkit-box",
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: "vertical",
                       }}
                     >
-                      {note.content || "Sin contenido"}
+                      {note.content || nyan_cat}
                     </Typography>
 
-                    {note.category && (
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                      >
+                    {/* Tags + categoría */}
+                    <Box sx={{ mt: 2, height: 40, flexShrink: 0 }}>
+                      {note.category && (
                         <Box
                           sx={{
-                            width: 10,
-                            height: 10,
-                            borderRadius: "50%",
-                            backgroundColor: note.category.color,
-                            mr: 1,
-                          }}
-                        />
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            fontWeight: "bold",
-                            color: note.category.color,
+                            display: "flex",
+                            alignItems: "center",
+                            mb: 0.5,
                           }}
                         >
-                          {note.category.name}
-                        </Typography>
-                      </Box>
-                    )}
-
-                    {note.tags?.length > 0 && (
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: 0.5,
-                          flexWrap: "wrap",
-                          mb: 1,
-                        }}
-                      >
-                        {note.tags.slice(0, 3).map((tag) => (
+                          <Box
+                            sx={{
+                              width: 10,
+                              height: 10,
+                              borderRadius: "50%",
+                              backgroundColor: note.category.color,
+                              mr: 1,
+                            }}
+                          />
                           <Typography
-                            key={tag.id}
                             variant="caption"
                             sx={{
-                              backgroundColor: "#e0e0e0",
-                              px: 0.8,
-                              py: 0.3,
-                              borderRadius: 1,
-                              color: "black",
-                              fontSize: "0.72rem",
+                              fontWeight: "bold",
+                              color: note.category.color,
                             }}
                           >
-                            #{tag.name}
+                            {note.category.name}
                           </Typography>
-                        ))}
-                      </Box>
-                    )}
+                        </Box>
+                      )}
 
-                    <Typography variant="caption" color="text.secondary">
+                      {note.tags?.length > 0 && (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: 0.5,
+                            flexWrap: "wrap",
+                            maxHeight: 20,
+                            overflow: "hidden",
+                          }}
+                        >
+                          {note.tags.slice(0, 3).map((tag) => (
+                            <Typography
+                              key={tag.id}
+                              variant="caption"
+                              sx={{
+                                backgroundColor: "#e0e0e0",
+                                px: 0.8,
+                                py: 0.3,
+                                borderRadius: 1,
+                                color: "black",
+                                fontSize: "0.72rem",
+                              }}
+                            >
+                              #{tag.name}
+                            </Typography>
+                          ))}
+                        </Box>
+                      )}
+                    </Box>
+
+                    {/* Footer */}
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ mt: 2, textAlign: "left", height: 20 }}
+                    >
                       {new Date(note.updatedAt).toLocaleDateString("es-PE", {
                         year: "numeric",
                         month: "2-digit",
@@ -462,10 +482,10 @@ export const NotesPage = () => {
                   </CardContent>
                 </CardActionArea>
               </Card>
-            </Grid>
+            </Grid2>
           ))
         ) : (
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <Paper sx={{ p: 3, textAlign: "center" }}>
               <Typography variant="body1">
                 No se encontraron notas con los filtros actuales.
@@ -488,7 +508,7 @@ export const NotesPage = () => {
             </Paper>
           </Grid>
         )}
-      </Grid>
+      </Grid2>
 
       <Stack spacing={2} mt={5} alignItems="center">
         <Pagination
