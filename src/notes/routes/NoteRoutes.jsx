@@ -1,3 +1,4 @@
+import { SubNoteForm } from "../components/subnote/SubNoteForm";
 import { NoteLayout } from "../layout/NoteLayout";
 import { CategoriesPage } from "../pages/CategoriesPage";
 import { DashboardPage } from "../pages/DashboardPage";
@@ -5,7 +6,7 @@ import { DashboardPage } from "../pages/DashboardPage";
 import { NotePageWrapper } from "../pages/NotePageWrapper";
 
 import { NotesPage } from "../pages/NotesPage";
-import { SubNoteCard } from "../pages/SubNoteCard";
+
 import { TagsPage } from "../pages/TagsPage";
 import { ToolsPage } from "../pages/ToolsPage";
 
@@ -40,7 +41,7 @@ const noteRoutes = {
     },
     {
       path: "note/:noteId/subnote/:subNoteId",
-      element: <SubNoteCard />,
+      element: <SubNoteForm />,
     },
   ],
 };

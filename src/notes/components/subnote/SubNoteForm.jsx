@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 
@@ -18,7 +18,6 @@ import {
   Button,
   IconButton,
   Chip,
-  Grid,
   Tooltip,
   Dialog,
   DialogActions,
@@ -38,23 +37,24 @@ import {
   PushPin as PushPinIcon,
   Archive as ArchiveIcon,
   Unarchive as UnarchiveIcon,
-  Add as AddIcon,
-  Image as ImageIcon,
-  Close as CloseIcon,
 } from "@mui/icons-material";
+
+import UploadIcon from "@mui/icons-material/Upload";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import UndoIcon from "@mui/icons-material/Undo";
 import Swal from "sweetalert2";
 
-import { setActiveSubNote } from "../../store/slices/noteSlice";
+import { setActiveSubNote } from "../../../store/slices/noteSlice";
 import { useForm, Controller } from "react-hook-form";
 import {
   useAddSubNoteMutation,
   useDeleteSubNoteMutation,
   useUpdateSubNoteMutation,
-} from "../../../services/subNoteApi";
+} from "../../../../services/subNoteApi";
 import { toast } from "react-toastify";
-import { Gallery } from "../components/Gallery";
+import { Gallery } from "../Gallery";
 
 const MAX_LENGTH = 5000;
 const MAX_LENGTH_CODE = 10000;
@@ -67,7 +67,7 @@ const toBoolean = (value) => {
   }
 };
 
-export const SubNoteCard = () => {
+export const SubNoteForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -86,8 +86,6 @@ export const SubNoteCard = () => {
 
   const isNewSubNote = subNoteId === "new";
   const { activeSubNote } = useSelector((state) => state.note);
-
-  console.log({ activeSubNote });
 
   //   USE FORM
 
@@ -363,7 +361,7 @@ export const SubNoteCard = () => {
         <Box
           sx={{
             width: "100%",
-            height: 400, // altura de la imagen
+            height: 200, // altura de la imagen
             backgroundImage:
               watchedImages.length > 0
                 ? `url(${watchedImages[0].url})`
@@ -589,28 +587,56 @@ export const SubNoteCard = () => {
 
               <Grid2 size={{ xs: 12 }}>
                 <Box sx={{ mb: 2 }}>
+                  {/* Encabezado con título e icono */}
                   <Stack
                     direction="row"
                     alignItems="center"
-                    spacing={1}
-                    sx={{ mb: 2 }}
+                    justifyContent="space-between"
+                    sx={{ mb: 1 }}
                   >
-                    <ImageOutlinedIcon color="action" />
-                    <Typography
-                      variant="h6"
-                      component="h2"
-                      sx={{
-                        fontSize: {
-                          xs: "1rem",
-                          sm: "1.3rem",
-                          // md: "2rem",
-                          // lg: "2rem",
-                        },
-                        fontWeight: 600,
-                      }}
-                    >
-                      IMAGES
-                    </Typography>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      <ImageOutlinedIcon color="primary" />
+                      <Typography
+                        variant="h6"
+                        component="h2"
+                        sx={{
+                          fontSize: { xs: "1rem", sm: "1.2rem" },
+                          fontWeight: 600,
+                        }}
+                      >
+                        Images
+                      </Typography>
+                    </Stack>
+
+                    {/* Acciones */}
+                    <Stack direction="row" spacing={1}>
+                      <Box>
+                        <input
+                          accept="image/*"
+                          type="file"
+                          hidden
+                          multiple
+                          id="upload-image"
+                          onChange={handleFileImageUpload}
+                        />
+                        <label htmlFor="upload-image">
+                          <Tooltip title="Upload from PC">
+                            <IconButton component="span" color="primary">
+                              <UploadIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </label>
+                      </Box>
+
+                      <Tooltip title="Add image by URL">
+                        <IconButton
+                          color="primary"
+                          onClick={() => setOpenImageDialog(true)}
+                        >
+                          <AddPhotoAlternateIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
                   </Stack>
                   <Gallery
                     images={watchedImages}
@@ -620,7 +646,7 @@ export const SubNoteCard = () => {
                     setValue={setValue}
                   />
                   {/* SUBIR DESDE PC */}
-                  <Box>
+                  {/* <Box>
                     <input
                       accept="image/*"
                       type="file"
@@ -645,7 +671,7 @@ export const SubNoteCard = () => {
                     sx={{ mt: 1 }}
                   >
                     Add image
-                  </Button>
+                  </Button> */}
                 </Box>
               </Grid2>
 
@@ -696,7 +722,7 @@ export const SubNoteCard = () => {
           open={openImageDialog}
           onClose={() => setOpenImageDialog(false)}
         >
-          <DialogTitle>Add Image</DialogTitle>
+          <DialogTitle>Add Image </DialogTitle>
           <DialogContent>
             {newImageUrl?.startsWith("data:image") ? (
               <img

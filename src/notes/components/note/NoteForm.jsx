@@ -33,22 +33,28 @@ import {
   Image as ImageIcon,
   Close as CloseIcon,
 } from "@mui/icons-material";
+
+import UploadIcon from "@mui/icons-material/Upload";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+
 import UndoIcon from "@mui/icons-material/Undo";
 import Swal from "sweetalert2";
 import { useForm, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import {
-  useAddNoteMutation,
-  useDeleteNoteMutation,
-  useUpdateNoteMutation,
-} from "../../../services/noteApi";
-import { Gallery } from "../components/Gallery";
+
+import { Gallery } from "../Gallery";
 
 import { Stack } from "@mui/material";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import { toast } from "react-toastify";
-import { SubNotesView } from "../views/SubNotesView";
+import { SubNotesView } from "../../views/SubNotesView";
+
+import {
+  useAddNoteMutation,
+  useDeleteNoteMutation,
+  useUpdateNoteMutation,
+} from "../../../../services/noteApi";
 
 const MAX_LENGTH = 5000;
 
@@ -60,7 +66,7 @@ const toBoolean = (value) => {
   }
 };
 
-export const NoteCard = ({ noteId = "new", onBack }) => {
+export const NoteForm = ({ noteId = "new", onBack }) => {
   const { categories, tags, userId } = useOutletContext();
   const [addNote, { isLoading: isLoadingCreateNote }] = useAddNoteMutation();
   const [saveNote, { isLoading: isLoadingSaveNote }] = useUpdateNoteMutation();
@@ -122,6 +128,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
   };
 
   const onSubmit = async (data) => {
+    console.log({ data });
     const confirmResult = await Swal.fire({
       title: "¿Guardar cambios?",
       text: "¿Estás seguro de que quieres guardar esta nota?",
@@ -323,6 +330,24 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
       component="form"
       onSubmit={handleSubmit(onSubmit)}
     >
+      {/* Portada -cover  */}
+
+      <Box
+        sx={{
+          width: "100%",
+          height: 320, // altura de la imagen
+          backgroundImage:
+            watchedImages.length > 0
+              ? `url(${watchedImages[0].url})`
+              : `url("https://picsum.photos/1200/400")`, // aquí pones tu URL
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          borderRadius: "8px 8px 0 0",
+          mb: 2, // separación con el contenido
+        }}
+      />
+
+      {/* Formulario */}
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <IconButton onClick={onBack}>
@@ -561,25 +586,62 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
                 <Stack
                   direction="row"
                   alignItems="center"
-                  spacing={1}
-                  sx={{ mb: 2 }}
+                  justifyContent="space-between"
+                  sx={{ mb: 1 }}
                 >
-                  <ImageOutlinedIcon color="action" />
-                  <Typography
-                    variant="h6"
-                    component="h2"
-                    sx={{
-                      fontSize: {
-                        xs: "1rem",
-                        sm: "1.3rem",
-                        // md: "2rem",
-                        // lg: "2rem",
-                      },
-                      fontWeight: 600,
-                    }}
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    spacing={1}
+                    sx={{ mb: 2 }}
                   >
-                    IMAGES
-                  </Typography>
+                    <ImageOutlinedIcon color="action" />
+                    <Typography
+                      variant="h6"
+                      component="h2"
+                      sx={{
+                        fontSize: {
+                          xs: "1rem",
+                          sm: "1.3rem",
+                          // md: "2rem",
+                          // lg: "2rem",
+                        },
+                        fontWeight: 600,
+                      }}
+                    >
+                      IMAGES
+                    </Typography>
+                  </Stack>
+
+                  {/* Acciones */}
+                  <Stack direction="row" spacing={1}>
+                    <Box>
+                      <input
+                        accept="image/*"
+                        type="file"
+                        hidden
+                        multiple
+                        id="upload-image"
+                        onChange={handleFileImageUpload}
+                      />
+                      <label htmlFor="upload-image">
+                        <Tooltip title="Upload from PC">
+                          <IconButton component="span" color="primary">
+                            <UploadIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </label>
+                    </Box>
+
+                    <Tooltip title="Add image by URL">
+                      <IconButton
+                        color="primary"
+                        onClick={() => setOpenImageDialog(true)}
+                      >
+                        <AddPhotoAlternateIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Stack>
                 </Stack>
                 <Gallery
                   images={watchedImages}
@@ -588,7 +650,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
                   onPin={handleInsertImageAtStart}
                 />
                 {/* SUBIR DESDE PC */}
-                <Box>
+                {/* <Box>
                   <input
                     accept="image/*"
                     type="file"
@@ -606,7 +668,7 @@ export const NoteCard = ({ noteId = "new", onBack }) => {
                       Upload image from PC
                     </Button>
                   </label>
-                </Box>
+                </Box> */}
                 <Button
                   startIcon={<ImageIcon />}
                   onClick={() => setOpenImageDialog(true)}

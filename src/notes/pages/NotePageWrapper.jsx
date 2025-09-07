@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { NoteCard } from "./NoteCard.jsx";
+import { NoteForm } from "../components/note/NoteForm.jsx";
 import { useDispatch } from "react-redux";
 import { setActiveNote } from "../../store/slices/noteSlice.js";
 import { Box } from "@mui/material";
@@ -25,7 +25,7 @@ export const NotePageWrapper = () => {
         p: 2,
       }}
     >
-      <NoteCard noteId={noteId} onBack={handleBack} />
+      <NoteForm noteId={noteId} onBack={handleBack} />
     </Box>
   );
 };

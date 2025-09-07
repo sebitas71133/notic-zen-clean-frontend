@@ -292,7 +292,7 @@ export const SubNotesView = ({ noteId }) => {
       </Box>
 
       {/* SUBNOTES */}
-      <Grid2 container spacing={1.5}>
+      <Grid2 container spacing={1}>
         {" "}
         {/* menos espacio entre tarjetas */}
         {subNotes?.length > 0 ? (
