@@ -66,6 +66,36 @@ export const notesApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Notes"],
     }),
+    shareNote: builder.mutation({
+      query: ({ noteId, role, email }) => ({
+        url: `note/notes/${noteId}/share`,
+        method: "POST",
+        body: { role, email },
+      }),
+      invalidatesTags: ["Notes"],
+    }),
+    changeRoleNote: builder.mutation({
+      query: ({ id, userId, role }) => ({
+        url: `note/notes/${id}/share/${userId}`,
+        method: "PUT",
+        body: { role },
+      }),
+      invalidatesTags: ["Notes"],
+    }),
+    revokeShareNote: builder.mutation({
+      query: ({ id, userId }) => ({
+        url: `note/notes/${id}/share/${userId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Notes"],
+    }),
+    getShareNotes: builder.query({
+      query: ({ noteId }) => ({
+        url: `note/notes/${noteId}/share`,
+        method: "GET",
+      }),
+      transformResponse: (response) => response.data,
+    }),
     getStats: builder.query({
       query: () => ({
         url: `note/stats`,
@@ -99,4 +129,9 @@ export const {
   useGetAllImagesQuery,
   useCleanOrphanImagesMutation,
   useGetStatsQuery,
+
+  useShareNoteMutation,
+  useChangeRoleNoteMutation,
+  useRevokeShareNoteMutation,
+  useGetShareNotesQuery,
 } = notesApi;

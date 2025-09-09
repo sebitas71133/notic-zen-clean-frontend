@@ -1,14 +1,18 @@
 import {
   Box,
+  Button,
   Card,
   CardActionArea,
   CardContent,
   CardMedia,
   Grid,
   Grid2,
+  Menu,
   Paper,
   Tooltip,
   Typography,
+  MenuItem,
+  IconButton,
 } from "@mui/material";
 import {
   NoteAdd as NoteAddIcon,
@@ -19,12 +23,27 @@ import { setActiveNote } from "../../../store/slices/noteSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+
+import { useState } from "react";
+
 const nyan_cat =
   "Nyan Cat es el nombre de un vídeo de YouTube subido en abril de 2011, que se convirtió en un fenómeno de Internet, en referencia a un gif animado de 8 bits de un gato volando con el cuerpo";
 
 export const NoteCard = ({ notes }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const handleClearFilters = () => {
+    setSearchSubTerm("");
+    setCategoryFilter("");
+    setTagFilter("");
+    setStatusFilter("all");
+  };
+
+  const handleNewNote = () => {
+    navigate("/app/note/new");
+  };
 
   return (
     <>

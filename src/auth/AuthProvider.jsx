@@ -7,6 +7,7 @@ import {
 } from "../store/slices/authSlice";
 import { useAuthStore } from "../hooks/useAuthStore";
 import { CheckingAuth } from "../components/CheckingAuth";
+import socketService from "../../socket/SocketService";
 
 // Se encarga de rehidratar y establecer el estado global de autenticación (Redux) al iniciar la app
 
@@ -29,6 +30,12 @@ export const AuthProvider = ({ children }) => {
 
       if (token && user) {
         await checkAuthToken(token);
+
+        // 👇 Una vez autenticado, conectamos el socket
+        const parsedUser = JSON.parse(user);
+
+        // socketService.auth = { token }; // opcional, si validas el token en el socket
+        socketService.connect(parsedUser.id);
       } else {
         // dispatch(logoutReducer());
         startLogout();

@@ -53,8 +53,11 @@ import { SubNotesView } from "../../views/SubNotesView";
 import {
   useAddNoteMutation,
   useDeleteNoteMutation,
+  useGetShareNotesQuery,
+  useGetStatsQuery,
   useUpdateNoteMutation,
 } from "../../../../services/noteApi";
+import ShareNoteForm from "./ShareNoteForm";
 
 const MAX_LENGTH = 5000;
 
@@ -70,6 +73,12 @@ export const NoteForm = ({ noteId = "new", onBack }) => {
   const { categories, tags, userId } = useOutletContext();
   const [addNote, { isLoading: isLoadingCreateNote }] = useAddNoteMutation();
   const [saveNote, { isLoading: isLoadingSaveNote }] = useUpdateNoteMutation();
+
+  const { data: shareNotes = [], isLoading: isShareNotesLoading } =
+    useGetShareNotesQuery({ noteId });
+
+  console.log(shareNotes);
+
   const isNewNote = noteId === "new";
   const navigate = useNavigate();
   const { activeNote } = useSelector((state) => state.note);
@@ -718,6 +727,12 @@ export const NoteForm = ({ noteId = "new", onBack }) => {
         </DialogActions>
       </Dialog>
       {/* SUBNOTES */}
+
+      <ShareNoteForm
+        noteId={activeNote.id}
+        sharedUsers={shareNotes}
+        // onUpdated={() => refetchNotes()}
+      ></ShareNoteForm>
 
       {!isNewNote && (
         <Box mt={4}>
