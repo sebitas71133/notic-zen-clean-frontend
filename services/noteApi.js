@@ -72,7 +72,7 @@ export const notesApi = apiSlice.injectEndpoints({
         method: "POST",
         body: { role, email },
       }),
-      invalidatesTags: ["Notes"],
+      invalidatesTags: ["Notes", "ShareNotes"],
     }),
     changeRoleNote: builder.mutation({
       query: ({ id, userId, role }) => ({
@@ -80,14 +80,14 @@ export const notesApi = apiSlice.injectEndpoints({
         method: "PUT",
         body: { role },
       }),
-      invalidatesTags: ["Notes"],
+      invalidatesTags: ["ShareNotes"],
     }),
     revokeShareNote: builder.mutation({
       query: ({ id, userId }) => ({
         url: `note/notes/${id}/share/${userId}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Notes"],
+      invalidatesTags: ["Notes", "ShareNotes"],
     }),
     getShareNotes: builder.query({
       query: ({ noteId }) => ({
@@ -95,6 +95,7 @@ export const notesApi = apiSlice.injectEndpoints({
         method: "GET",
       }),
       transformResponse: (response) => response.data,
+      providesTags: ["ShareNotes"],
     }),
     getStats: builder.query({
       query: () => ({

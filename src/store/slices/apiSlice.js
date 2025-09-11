@@ -25,6 +25,8 @@ export const apiSlice = createApi({
     "SubNotes",
     "SubImages",
     "AllSubNotes",
+    "Notifications",
+    "ShareNotes",
   ],
   endpoints: () => ({}), // vacío al inicio
 });

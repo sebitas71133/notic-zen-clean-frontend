@@ -13,6 +13,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { toggleDarkMode } from "../../store/slices/themeSlice";
 import { DarkMode } from "../../components/DarkMode";
+import { NotificationBell } from "./NotificationBell";
 
 export const NavBar = ({ drawerWidth = 240 }) => {
   const { darkMode } = useSelector((state) => state.theme);
@@ -83,6 +84,9 @@ export const NavBar = ({ drawerWidth = 240 }) => {
               <Tooltip title={darkMode ? "Light Mode" : "Dark Mode"}>
                 <DarkMode darkMode={darkMode} setDarkMode={setDarkMode} />
               </Tooltip>
+            </Grid>
+            <Grid item>
+              <NotificationBell />
             </Grid>
           </Grid>
         </Grid>

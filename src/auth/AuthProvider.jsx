@@ -7,7 +7,7 @@ import {
 } from "../store/slices/authSlice";
 import { useAuthStore } from "../hooks/useAuthStore";
 import { CheckingAuth } from "../components/CheckingAuth";
-import socketService from "../../socket/SocketService";
+import socketService from "../../socket/SocketService.jsx";
 
 // Se encarga de rehidratar y establecer el estado global de autenticación (Redux) al iniciar la app
 

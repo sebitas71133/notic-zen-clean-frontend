@@ -47,13 +47,41 @@ export class SocketService {
     });
 
     this.socket.on("note:shared", (payload) => {
-      toast.info(`📩 Te compartieron una nota: ${payload?.title ?? ""}`);
-      store.dispatch(notesApi.util.invalidateTags(["Notes"]));
+      toast(
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {payload.noteImage && (
+            <img
+              src={payload.noteImage}
+              alt="note thumbnail"
+              style={{
+                width: 40,
+                height: 40,
+                objectFit: "cover",
+                borderRadius: 6,
+                marginRight: 8,
+              }}
+            />
+          )}
+          <div>
+            <strong>{payload.senderName}</strong> te compartió la nota:
+            <div style={{ fontWeight: "bold" }}>{payload.noteTitle}</div>
+          </div>
+        </div>,
+        { type: "info" }
+      );
+
+      store.dispatch(notesApi.util.invalidateTags(["Notes", "Notifications"]));
     });
 
     this.socket.on("note:updated", (payload) => {
-      console.log("sda");
       toast.info(`✏️ Una nota fue actualizada: ${payload?.title ?? ""}`);
+      store.dispatch(notesApi.util.invalidateTags(["Notes"]));
+    });
+
+    this.socket.on("note:role", (payload) => {
+      toast.info(
+        `Tu rol en la nota: ${payload?.note ?? ""} ahora es ${payload?.role}`
+      );
       store.dispatch(notesApi.util.invalidateTags(["Notes"]));
     });
 
@@ -65,9 +93,19 @@ export class SocketService {
     });
 
     this.socket.on("note:deleted", (payload) => {
-      console.log("🗑️ Nota eliminada:", payload);
+      toast.warning(
+        `🚫 La nota compartida: ${
+          payload?.title ?? ""
+        } fue eliminada por el dueño : ${payload?.revokedBy}`
+      );
       store.dispatch(notesApi.util.invalidateTags(["Notes"]));
     });
+
+    // //NOTIFICATIONS
+
+    // this.socket.on("notification:new", (payload) => {
+    //   store.dispatch(notesApi.util.invalidateTags(["Notifications"]));
+    // });
   }
 }
 
