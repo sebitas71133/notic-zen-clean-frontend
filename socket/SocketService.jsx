@@ -3,6 +3,8 @@ import { io } from "socket.io-client";
 import { store } from "../src/store/store";
 import { notesApi } from "../services/noteApi";
 import { toast } from "react-toastify";
+import { Avatar, Typography, Box } from "@mui/material";
+import { setActiveNote, setActiveSubNote } from "../src/store/slices/noteSlice";
 
 export class SocketService {
   socket = null;
@@ -74,8 +76,59 @@ export class SocketService {
     });
 
     this.socket.on("note:updated", (payload) => {
-      toast.info(`✏️ Una nota fue actualizada: ${payload?.title ?? ""}`);
+      toast.info(
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          {/* Imagen de la nota */}
+          {payload.images?.length > 0 && (
+            <Avatar
+              src={payload.images[0].url}
+              alt="Note Thumbnail"
+              variant="square"
+              sx={{ width: 40, height: 40, borderRadius: 1 }}
+            />
+          )}
+
+          {/* Info de la notificación */}
+          <Box>
+            <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+              ✏️ NOTA : {payload.title}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Actualizada por {payload.currentUser?.email || "Alguien"}
+            </Typography>
+          </Box>
+        </Box>,
+        {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+        }
+      );
+
+      // refresca lista
       store.dispatch(notesApi.util.invalidateTags(["Notes"]));
+
+      // refresca nota activa si coincide
+      const state = store.getState();
+      const { activeNote } = state.note;
+
+      if (activeNote && activeNote.id === payload.id) {
+        store.dispatch(
+          setActiveNote({
+            ...activeNote,
+            title: payload.title,
+            categoryId: payload.category.id,
+            content: payload.content,
+            isPinned: payload.isPinned,
+            isArchived: payload.isArchived,
+            tags: payload.tags,
+            images: payload.images,
+            updatedAt: new Date().toISOString(),
+          })
+        );
+      }
     });
 
     this.socket.on("note:role", (payload) => {
@@ -99,6 +152,66 @@ export class SocketService {
         } fue eliminada por el dueño : ${payload?.revokedBy}`
       );
       store.dispatch(notesApi.util.invalidateTags(["Notes"]));
+    });
+
+    //Subnote
+
+    this.socket.on("subnote:updated", (payload) => {
+      toast.info(
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          {/* Imagen de la subnota */}
+          {payload.images?.length > 0 && (
+            <Avatar
+              src={payload.images[0].url}
+              alt="SubNote Thumbnail"
+              variant="square"
+              sx={{ width: 40, height: 40, borderRadius: 1 }}
+            />
+          )}
+
+          {/* Info de la notificación */}
+          <Box>
+            <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+              ✏️ SUBNOTA : {payload.title || "Subnota sin título"}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Actualizada por {payload.owner?.email || "Alguien"}
+            </Typography>
+          </Box>
+        </Box>,
+        {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+        }
+      );
+
+      // refresca lista de subnotas
+      store.dispatch(notesApi.util.invalidateTags(["SubNotes"]));
+
+      // refresca subnota activa si coincide
+      const state = store.getState();
+      const { activeSubNote } = state.note;
+
+      console.log({ activeSubNote });
+
+      if (activeSubNote && activeSubNote.id === payload.subNoteId) {
+        store.dispatch(
+          setActiveSubNote({
+            ...activeSubNote,
+            title: payload.title,
+            description: payload.description,
+            isPinned: payload.isPinned,
+            isArchived: payload.isArchived,
+            tags: payload.tags,
+            images: payload.images,
+            code: payload.code,
+            updatedAt: new Date().toISOString(),
+          })
+        );
+      }
     });
 
     // //NOTIFICATIONS

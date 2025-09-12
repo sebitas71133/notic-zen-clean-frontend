@@ -7,9 +7,10 @@ export default defineConfig({
   optimizeDeps: { exclude: ["firebase"] },
   server: {
     host: true,
+    port: 5173,
     allowedHosts: [
       "all",
-      "chef-revenge-detector-based.trycloudflare.com", // 👈 esto permite cualquier túnel de Cloudflare
+      "adaptation-consist-afternoon-carolina.trycloudflare.com", // 👈 esto permite cualquier túnel de Cloudflare
     ],
   },
 });

@@ -153,6 +153,8 @@ export const NoteCard = ({ notes }) => {
                     flex: 1,
                     display: "flex",
                     flexDirection: "column",
+                    width: "100%",
+
                     p: 1.5,
                   }}
                 >

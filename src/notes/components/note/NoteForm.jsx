@@ -40,7 +40,7 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import UndoIcon from "@mui/icons-material/Undo";
 import Swal from "sweetalert2";
 import { useForm, Controller } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useOutletContext } from "react-router-dom";
 
 import { Gallery } from "../Gallery";
@@ -71,17 +71,18 @@ const toBoolean = (value) => {
 
 export const NoteForm = ({ noteId = "new", onBack }) => {
   const { categories, tags, userId } = useOutletContext();
+
   const [addNote, { isLoading: isLoadingCreateNote }] = useAddNoteMutation();
   const [saveNote, { isLoading: isLoadingSaveNote }] = useUpdateNoteMutation();
 
   const { data: shareNotes = [], isLoading: isShareNotesLoading } =
     useGetShareNotesQuery({ noteId });
 
-  console.log(shareNotes);
-
   const isNewNote = noteId === "new";
   const navigate = useNavigate();
   const { activeNote } = useSelector((state) => state.note);
+
+  console.log(shareNotes);
 
   const {
     register,
@@ -728,11 +729,13 @@ export const NoteForm = ({ noteId = "new", onBack }) => {
       </Dialog>
       {/* SUBNOTES */}
 
-      <ShareNoteForm
-        noteId={activeNote.id}
-        sharedUsers={shareNotes}
-        // onUpdated={() => refetchNotes()}
-      ></ShareNoteForm>
+      {shareNotes.length > 0 && (
+        <ShareNoteForm
+          noteId={activeNote?.id}
+          sharedUsers={shareNotes}
+          // onUpdated={() => refetchNotes()}
+        ></ShareNoteForm>
+      )}
 
       {!isNewNote && (
         <Box mt={4}>
