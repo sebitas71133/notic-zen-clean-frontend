@@ -11,6 +11,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useState } from "react";
 import {
   useGetMyNotificationsQuery,
+  useMarkAllAsReadMutation,
   useMarkAsReadMutation,
 } from "../../../services/nortificationApi";
 
@@ -20,6 +21,8 @@ export const NotificationBell = () => {
   const theme = useTheme();
   const { data: notifications = [], isLoading } = useGetMyNotificationsQuery();
   const [markAsRead] = useMarkAsReadMutation();
+
+  const [markAllAsRead] = useMarkAllAsReadMutation();
 
   const unreadCount = notifications?.filter((n) => !n.isRead).length;
 
@@ -34,6 +37,11 @@ export const NotificationBell = () => {
 
   const handleNotificationClick = async (id) => {
     await markAsRead({ id }); // marcar como leída
+    handleCloseMenu();
+  };
+
+  const handleClearNotificationsClick = async () => {
+    await markAllAsRead({}); // marcar como leída
     handleCloseMenu();
   };
 
@@ -92,6 +100,12 @@ export const NotificationBell = () => {
             )}
           </MenuItem>
         ))}
+        <MenuItem
+          onClick={() => handleClearNotificationsClick()}
+          sx={{ justifyContent: "center", fontWeight: "bold", color: "red" }}
+        >
+          Borrar todas
+        </MenuItem>
       </Menu>
     </>
   );

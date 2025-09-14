@@ -728,14 +728,20 @@ export const NoteForm = ({ noteId = "new", onBack }) => {
         </DialogActions>
       </Dialog>
       {/* SUBNOTES */}
-
+      {/* 
       {shareNotes.length > 0 && (
         <ShareNoteForm
           noteId={activeNote?.id}
           sharedUsers={shareNotes}
           // onUpdated={() => refetchNotes()}
         ></ShareNoteForm>
-      )}
+      )} */}
+
+      <ShareNoteForm
+        noteId={activeNote?.id}
+        sharedUsers={shareNotes}
+        // onUpdated={() => refetchNotes()}
+      ></ShareNoteForm>
 
       {!isNewNote && (
         <Box mt={4}>

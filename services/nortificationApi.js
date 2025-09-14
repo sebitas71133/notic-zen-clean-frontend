@@ -49,4 +49,5 @@ export const {
   useGetMyNotificationsQuery,
   useMarkAsReadMutation,
   useDeleteNotificationMutation,
+  useMarkAllAsReadMutation,
 } = notificationApi;

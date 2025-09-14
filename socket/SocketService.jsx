@@ -108,7 +108,7 @@ export class SocketService {
       );
 
       // refresca lista
-      store.dispatch(notesApi.util.invalidateTags(["Notes"]));
+      store.dispatch(notesApi.util.invalidateTags(["Notes", "Notifications"]));
 
       // refresca nota activa si coincide
       const state = store.getState();
@@ -189,7 +189,9 @@ export class SocketService {
       );
 
       // refresca lista de subnotas
-      store.dispatch(notesApi.util.invalidateTags(["SubNotes"]));
+      store.dispatch(
+        notesApi.util.invalidateTags(["SubNotes", "Notifications"])
+      );
 
       // refresca subnota activa si coincide
       const state = store.getState();
