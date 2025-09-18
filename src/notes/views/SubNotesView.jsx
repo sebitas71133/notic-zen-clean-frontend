@@ -48,7 +48,7 @@ export const SubNotesView = ({ noteId }) => {
   const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const [categoryFilter, setCategoryFilter] = useState("");
+
   const [tagFilter, setTagFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortTitle, setSortTitle] = useState("asc");
@@ -102,7 +102,7 @@ export const SubNotesView = ({ noteId }) => {
 
   const handleClearFilters = () => {
     setSearchSubTerm("");
-    setCategoryFilter("");
+
     setTagFilter("");
     setStatusFilter("all");
   };

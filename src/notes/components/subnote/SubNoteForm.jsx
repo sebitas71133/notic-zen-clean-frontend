@@ -72,7 +72,8 @@ export const SubNoteForm = () => {
   const dispatch = useDispatch();
 
   const { noteId, subNoteId } = useParams();
-  const { tags } = useOutletContext();
+  const { tags, userId } = useOutletContext();
+  const { activeNote } = useSelector((state) => state.note);
 
   const handleBack = () => {
     dispatch(setActiveSubNote(null));
@@ -676,44 +677,49 @@ export const SubNoteForm = () => {
               </Grid2>
 
               {/* Tags */}
-              <Grid2 size={{ xs: 12 }}>
-                <Controller
-                  name="tags"
-                  control={control}
-                  render={({ field }) => (
-                    <Autocomplete
-                      multiple
-                      options={tags}
-                      getOptionLabel={(tag) => tag.name}
-                      value={tags.filter((tag) => field.value.includes(tag.id))}
-                      onChange={(e, newValue) =>
-                        field.onChange(newValue.map((tag) => tag.id))
-                      }
-                      renderTags={(value, getTagProps) =>
-                        value.map((option, index) => {
-                          const { key, ...tagProps } = getTagProps({
-                            index,
-                          });
-                          return (
-                            <Chip
-                              key={option.id}
-                              label={option.name}
-                              {...tagProps}
-                            />
-                          );
-                        })
-                      }
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label="Tags"
-                          placeholder="Add Tags"
-                        />
-                      )}
-                    />
-                  )}
-                />
-              </Grid2>
+
+              {activeNote?.userId === userId && (
+                <Grid2 size={{ xs: 12 }}>
+                  <Controller
+                    name="tags"
+                    control={control}
+                    render={({ field }) => (
+                      <Autocomplete
+                        multiple
+                        options={tags}
+                        getOptionLabel={(tag) => tag.name}
+                        value={tags.filter((tag) =>
+                          field.value.includes(tag.id)
+                        )}
+                        onChange={(e, newValue) =>
+                          field.onChange(newValue.map((tag) => tag.id))
+                        }
+                        renderTags={(value, getTagProps) =>
+                          value.map((option, index) => {
+                            const { key, ...tagProps } = getTagProps({
+                              index,
+                            });
+                            return (
+                              <Chip
+                                key={option.id}
+                                label={option.name}
+                                {...tagProps}
+                              />
+                            );
+                          })
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Tags"
+                            placeholder="Add Tags"
+                          />
+                        )}
+                      />
+                    )}
+                  />
+                </Grid2>
+              )}
             </Grid2>
           </Box>
         </Paper>

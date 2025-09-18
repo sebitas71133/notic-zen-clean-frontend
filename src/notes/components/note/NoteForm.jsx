@@ -54,10 +54,10 @@ import {
   useAddNoteMutation,
   useDeleteNoteMutation,
   useGetShareNotesQuery,
-  useGetStatsQuery,
   useUpdateNoteMutation,
 } from "../../../../services/noteApi";
 import ShareNoteForm from "./ShareNoteForm";
+import { IsOwner } from "./IsOwner";
 
 const MAX_LENGTH = 5000;
 
@@ -82,7 +82,8 @@ export const NoteForm = ({ noteId = "new", onBack }) => {
   const navigate = useNavigate();
   const { activeNote } = useSelector((state) => state.note);
 
-  console.log(shareNotes);
+  console.log(activeNote);
+  console.log(userId);
 
   const {
     register,
@@ -376,6 +377,14 @@ export const NoteForm = ({ noteId = "new", onBack }) => {
           >
             {isNewNote ? "NEW NOTE" : "EDIT NOTE"}
           </Typography>
+
+          {/* Indicador Owner */}
+
+          <IsOwner
+            isNewNote={isNewNote}
+            activeNote={activeNote}
+            userId={userId}
+          ></IsOwner>
         </Box>
         <Box>
           {!isNewNote && (
@@ -554,42 +563,44 @@ export const NoteForm = ({ noteId = "new", onBack }) => {
             {/* Editor de contenido */}
 
             {/* Tags */}
-            <Grid item xs={12}>
-              <Controller
-                name="tags"
-                control={control}
-                render={({ field }) => (
-                  <Autocomplete
-                    multiple
-                    options={tags}
-                    getOptionLabel={(tag) => tag.name}
-                    value={tags.filter((tag) => field.value.includes(tag.id))}
-                    onChange={(e, newValue) =>
-                      field.onChange(newValue.map((tag) => tag.id))
-                    }
-                    renderTags={(value, getTagProps) =>
-                      value.map((option, index) => {
-                        const { key, ...tagProps } = getTagProps({ index });
-                        return (
-                          <Chip
-                            key={option.id}
-                            label={option.name}
-                            {...tagProps}
-                          />
-                        );
-                      })
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Tags"
-                        placeholder="Add Tags"
-                      />
-                    )}
-                  />
-                )}
-              />
-            </Grid>
+            {activeNote?.userId === userId && (
+              <Grid item xs={12}>
+                <Controller
+                  name="tags"
+                  control={control}
+                  render={({ field }) => (
+                    <Autocomplete
+                      multiple
+                      options={tags}
+                      getOptionLabel={(tag) => tag.name}
+                      value={tags.filter((tag) => field.value.includes(tag.id))}
+                      onChange={(e, newValue) =>
+                        field.onChange(newValue.map((tag) => tag.id))
+                      }
+                      renderTags={(value, getTagProps) =>
+                        value.map((option, index) => {
+                          const { key, ...tagProps } = getTagProps({ index });
+                          return (
+                            <Chip
+                              key={option.id}
+                              label={option.name}
+                              {...tagProps}
+                            />
+                          );
+                        })
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Tags"
+                          placeholder="Add Tags"
+                        />
+                      )}
+                    />
+                  )}
+                />
+              </Grid>
+            )}
 
             <Grid item xs={12}>
               <Box sx={{ mb: 2 }}>
@@ -737,11 +748,13 @@ export const NoteForm = ({ noteId = "new", onBack }) => {
         ></ShareNoteForm>
       )} */}
 
-      <ShareNoteForm
-        noteId={activeNote?.id}
-        sharedUsers={shareNotes}
-        // onUpdated={() => refetchNotes()}
-      ></ShareNoteForm>
+      {activeNote?.userId === userId && (
+        <ShareNoteForm
+          noteId={activeNote?.id}
+          sharedUsers={shareNotes}
+          // onUpdated={() => refetchNotes()}
+        ></ShareNoteForm>
+      )}
 
       {!isNewNote && (
         <Box mt={4}>

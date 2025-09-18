@@ -61,7 +61,9 @@ const ShareNoteForm = ({ noteId, sharedUsers = [], onUpdated }) => {
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    <Box
+      sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 5, mb: 5 }}
+    >
       <Typography variant="h6">Compartir nota</Typography>
 
       {/* Invitar usuario */}
