@@ -41,6 +41,8 @@ export const NotificationBell = () => {
   };
 
   const handleClearNotificationsClick = async () => {
+    if (notifications.length === 0) return;
+
     await markAllAsRead({}); // marcar como leída
     handleCloseMenu();
   };
@@ -104,7 +106,7 @@ export const NotificationBell = () => {
           onClick={() => handleClearNotificationsClick()}
           sx={{ justifyContent: "center", fontWeight: "bold", color: "red" }}
         >
-          Borrar todas
+          Clean All
         </MenuItem>
       </Menu>
     </>
