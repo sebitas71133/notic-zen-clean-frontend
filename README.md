@@ -66,7 +66,9 @@ Ejemplo:
 
 ```env
 
-VITE_API_URL=https://notes-api.onrender.com
+VITE_API_URL=https://notes-api.onrender.com/api
+
+VITE_SOCKET_URL=https://notes-api.onrender.com
 
 ```
 
